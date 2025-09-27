@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace AllTheBeans.Controllers
+namespace AllTheBeans.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]

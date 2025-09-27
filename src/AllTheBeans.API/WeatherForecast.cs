@@ -1,4 +1,4 @@
-namespace AllTheBeans
+namespace AllTheBeans.API
 {
     public class WeatherForecast
     {
