@@ -1,6 +1,3 @@
 @AllTheBeans_HostAddress = http://localhost:5008
 
-GET {{AllTheBeans_HostAddress}}/weatherforecast/
-Accept: application/json
-
 ###
