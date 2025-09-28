@@ -1,3 +1,4 @@
+using AllTheBeans.Domain;
 using AllTheBeans.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,7 @@ if (builder.Environment.IsDevelopment())
 
 builder.Services.AddControllers();
 
+builder.Services.AddDomainServices();
 builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
