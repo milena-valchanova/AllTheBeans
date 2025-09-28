@@ -1,11 +1,12 @@
-﻿using AllTheBeans.Domain.Enums;
+﻿using AllTheBeans.Domain.Entities.Constants;
+using AllTheBeans.Domain.Enums;
+using AllTheBeans.Domain.Exceptions;
 using System.ComponentModel.DataAnnotations;
 
 namespace AllTheBeans.Domain.Entities;
-internal class Bean
+public class Bean
 {
-    [StringLength(24)]
-    public string Id { get; set; } = string.Empty;
+    public Guid Id { get; set; }
 
     [Required]
     public uint Index { get; set; }
@@ -16,19 +17,26 @@ internal class Bean
     public decimal Cost { get; set; }
 
     [Required]
-    [StringLength(50)]
+    [StringLength(PropertyLengths.ImageName)]
     public string ImageName { get; set; } = string.Empty;
 
     public BeanColour Colour { get; set; }
 
     [Required]
-    [StringLength(100)]
+    [StringLength(PropertyLengths.Name)]
     public string Name { get; set; } = string.Empty;
 
     [Required]
-    [StringLength(2000)]
+    [StringLength(PropertyLengths.Description)]
     public string Description { get; set; } = string.Empty;
 
-    [Required]
     public long CountryId { get; set; }
+
+    private Country? _country;
+    public Country Country
+    {
+        get => _country 
+            ?? throw new PropertyNotInitialisedException(nameof(Country));
+        set => _country = value;
+    }
 }

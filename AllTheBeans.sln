@@ -16,6 +16,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AllTheBeans.API", "src\AllT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AllTheBeans.Domain", "src\AllTheBeans.Domain\AllTheBeans.Domain.csproj", "{5CB83ED2-8B30-48EF-9028-F322A60A89BC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AllTheBeans.Infrastructure", "src\AllTheBeans.Infrastructure\AllTheBeans.Infrastructure.csproj", "{AF3E279A-DC9B-4C02-BC6C-974AEEAC0A16}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deploy", "deploy", "{38341B55-1696-48D8-94C6-4DA2527B9A2F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "local", "local", "{E0701606-E3D1-475A-B8AA-76F1C2108CC3}"
+	ProjectSection(SolutionItems) = preProject
+		deploy\local\docker-compose.yml = deploy\local\docker-compose.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{EFEC0F57-4979-4057-985B-D8C526DF3B35}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AllTheBeans.Infrastructure.IntegrationTests", "test\AllTheBeans.Infrastructure.IntegrationTests\AllTheBeans.Infrastructure.IntegrationTests.csproj", "{25DF1AD5-4F55-40BD-BBC8-EF77FEAAAC41}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +43,14 @@ Global
 		{5CB83ED2-8B30-48EF-9028-F322A60A89BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5CB83ED2-8B30-48EF-9028-F322A60A89BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5CB83ED2-8B30-48EF-9028-F322A60A89BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF3E279A-DC9B-4C02-BC6C-974AEEAC0A16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF3E279A-DC9B-4C02-BC6C-974AEEAC0A16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF3E279A-DC9B-4C02-BC6C-974AEEAC0A16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF3E279A-DC9B-4C02-BC6C-974AEEAC0A16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25DF1AD5-4F55-40BD-BBC8-EF77FEAAAC41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25DF1AD5-4F55-40BD-BBC8-EF77FEAAAC41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25DF1AD5-4F55-40BD-BBC8-EF77FEAAAC41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25DF1AD5-4F55-40BD-BBC8-EF77FEAAAC41}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -37,6 +58,9 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{5B9635C2-5DD3-3DEE-B11E-E20CAD862276} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{5CB83ED2-8B30-48EF-9028-F322A60A89BC} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{AF3E279A-DC9B-4C02-BC6C-974AEEAC0A16} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{E0701606-E3D1-475A-B8AA-76F1C2108CC3} = {38341B55-1696-48D8-94C6-4DA2527B9A2F}
+		{25DF1AD5-4F55-40BD-BBC8-EF77FEAAAC41} = {EFEC0F57-4979-4057-985B-D8C526DF3B35}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {24D91E51-E311-4E23-B230-C38DCE83E5E6}

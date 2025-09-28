@@ -1,5 +1,5 @@
 ﻿namespace AllTheBeans.Domain.Enums;
-internal enum BeanColour
+public enum BeanColour
 {
     Green = 1,
     Golden = 2,
