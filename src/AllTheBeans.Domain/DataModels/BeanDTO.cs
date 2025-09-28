@@ -10,4 +10,5 @@ internal class BeanDTO : IBeanDTO
     public BeanColour Colour { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
+    public string CountryName { get; set; } = string.Empty;
 }

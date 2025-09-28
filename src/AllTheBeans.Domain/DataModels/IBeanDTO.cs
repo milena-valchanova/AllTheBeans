@@ -10,4 +10,5 @@ public interface IBeanDTO
     BeanColour Colour { get; }
     string Name { get; }
     string Description { get; }
+    string CountryName { get; }
 }

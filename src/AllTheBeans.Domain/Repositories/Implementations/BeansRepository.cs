@@ -4,7 +4,7 @@ using AllTheBeans.Domain.Entities;
 namespace AllTheBeans.Domain.Repositories.Implementations;
 internal class BeansRepository(BeansContext _context) : IBeansRepository
 {
-    public async Task CreateAsync(IBeanDTO beanDTO, long countryId, CancellationToken cancellationToken = default)
+    public async Task<Guid> CreateAsync(IBeanDTO beanDTO, long countryId, CancellationToken cancellationToken = default)
     {
         var bean = new Bean()
         {
@@ -20,6 +20,7 @@ internal class BeansRepository(BeansContext _context) : IBeansRepository
         };
         _context.Beans.Add(bean);
         await _context.SaveChangesAsync(cancellationToken);
+        return bean.Id;
     }
 }
 
