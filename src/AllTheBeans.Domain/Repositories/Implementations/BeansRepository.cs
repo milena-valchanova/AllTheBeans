@@ -15,7 +15,7 @@ internal class BeansRepository(BeansContext _context) : IBeansRepository
             ImageName = beanDTO.ImageName,
             Colour = beanDTO.Colour,
             Name = beanDTO.Name,
-            Description = beanDTO.Description,
+            Description = beanDTO.Description.Trim(),
             CountryId = countryId
         };
         _context.Beans.Add(bean);

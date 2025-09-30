@@ -1,0 +1,4 @@
+{
+  "payload": [ "The payload field is required." ],
+  "$.colour": [ "The JSON value could not be converted to AllTheBeans.Domain.Enums.BeanColour. Path: $.colour | LineNumber: 5 | BytePositionInLine: 31." ]
+}

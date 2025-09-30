@@ -2,7 +2,7 @@
 
 namespace AllTheBeans.Domain.Services;
 
-internal interface IBeansInitialisationService
+public interface IBeansInitialisationService
 {
     Task<Guid> InitiliseAsync(IBeanDTO beanDTO, CancellationToken cancellationToken = default);
 }

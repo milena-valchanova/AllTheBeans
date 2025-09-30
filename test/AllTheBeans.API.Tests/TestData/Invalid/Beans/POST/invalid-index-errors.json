@@ -1,0 +1,8 @@
+{
+  "payload": [
+    "The payload field is required."
+  ],
+  "$.index": [
+    "The JSON value could not be converted to System.Nullable\u00601[System.UInt32]. Path: $.index | LineNumber: 1 | BytePositionInLine: 13."
+  ]
+}
