@@ -2,6 +2,7 @@
 using AllTheBeans.Domain.Entities;
 using AllTheBeans.Domain.Entities.Constants;
 using AllTheBeans.Domain.Enums;
+using EntityFramework.Exceptions.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -115,7 +116,7 @@ internal class DatabaseConstrainsTests
 
     private void VerifyStringLengthConstrainIsApplied(long expectedLength)
     {
-        var exception = Assert.ThrowsAsync<DbUpdateException>(
+        var exception = Assert.ThrowsAsync<MaxLengthExceededException>(
                     () => _context.SaveChangesAsync());
 
         using var _ = Assert.EnterMultipleScope();
