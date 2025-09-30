@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Enums.NET" Version="5.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.4" />
   </ItemGroup>
 
@@ -15,4 +16,7 @@
     <ProjectReference Include="..\AllTheBeans.Infrastructure\AllTheBeans.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="AllTheBeans.API.UnitTests" />
+  </ItemGroup>
 </Project>

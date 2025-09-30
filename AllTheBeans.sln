@@ -29,9 +29,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{EFEC0F57-4
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AllTheBeans.Infrastructure.IntegrationTests", "test\AllTheBeans.Infrastructure.IntegrationTests\AllTheBeans.Infrastructure.IntegrationTests.csproj", "{25DF1AD5-4F55-40BD-BBC8-EF77FEAAAC41}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AllTheBeans.Domain.Tests", "test\AllTheBeans.Domain.Tests\AllTheBeans.Domain.Tests.csproj", "{5B723C7B-AC6F-4723-9C97-F5697C97D33F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AllTheBeans.Domain.UnitTests", "test\AllTheBeans.Domain.Tests\AllTheBeans.Domain.UnitTests.csproj", "{5B723C7B-AC6F-4723-9C97-F5697C97D33F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AllTheBeans.API.IntegrationTests", "test\AllTheBeans.API.Tests\AllTheBeans.API.IntegrationTests.csproj", "{FEB72DEE-80A2-445F-9D9C-C8E33C18A864}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AllTheBeans.API.UnitTests", "test\AllTheBeans.UnitTests\AllTheBeans.API.UnitTests.csproj", "{7B5662F8-CB57-4C50-B118-B373B9B3BF18}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{FEB72DEE-80A2-445F-9D9C-C8E33C18A864}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FEB72DEE-80A2-445F-9D9C-C8E33C18A864}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FEB72DEE-80A2-445F-9D9C-C8E33C18A864}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B5662F8-CB57-4C50-B118-B373B9B3BF18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B5662F8-CB57-4C50-B118-B373B9B3BF18}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B5662F8-CB57-4C50-B118-B373B9B3BF18}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B5662F8-CB57-4C50-B118-B373B9B3BF18}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -75,6 +81,7 @@ Global
 		{25DF1AD5-4F55-40BD-BBC8-EF77FEAAAC41} = {EFEC0F57-4979-4057-985B-D8C526DF3B35}
 		{5B723C7B-AC6F-4723-9C97-F5697C97D33F} = {EFEC0F57-4979-4057-985B-D8C526DF3B35}
 		{FEB72DEE-80A2-445F-9D9C-C8E33C18A864} = {EFEC0F57-4979-4057-985B-D8C526DF3B35}
+		{7B5662F8-CB57-4C50-B118-B373B9B3BF18} = {EFEC0F57-4979-4057-985B-D8C526DF3B35}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {24D91E51-E311-4E23-B230-C38DCE83E5E6}

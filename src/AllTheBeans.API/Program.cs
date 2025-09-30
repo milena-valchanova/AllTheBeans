@@ -1,3 +1,4 @@
+using AllTheBeans.API.Mappers;
 using AllTheBeans.API.Middleware;
 using AllTheBeans.Domain;
 using AllTheBeans.Infrastructure;
@@ -12,6 +13,7 @@ if (builder.Environment.IsDevelopment())
 
 builder.Services.AddControllers();
 
+builder.Services.AddSingleton<IBeansMapper, BeansMapper>();
 builder.Services.AddDomainServices();
 builder.Services.AddInfrastructure(builder.Configuration);
 

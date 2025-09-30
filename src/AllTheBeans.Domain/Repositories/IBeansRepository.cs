@@ -3,5 +3,10 @@
 namespace AllTheBeans.Domain.Repositories;
 public interface IBeansRepository
 {
-    Task<Guid> CreateAsync(IBeanDTO beanDTO, long countryId, CancellationToken cancellationToken = default);
+    Task<List<IBeanDTO>> GetAllAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default);
+
+    Task<int> CountAllAsync(CancellationToken cancellationToken = default);
+
+    Task<Guid> CreateAsync(ICreateBeanDTO beanDTO, long countryId, CancellationToken cancellationToken = default);
+
 }

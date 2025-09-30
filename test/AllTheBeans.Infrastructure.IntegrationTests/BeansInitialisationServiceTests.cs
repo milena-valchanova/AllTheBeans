@@ -78,10 +78,10 @@ internal class BeansInitialisationServiceTests
     {
         var thrownException = new Exception("Something went wrong");
         _beansRepository
-            .CreateAsync(Arg.Any<BeanDTO>(), Arg.Any<long>(), Arg.Any<CancellationToken>())
+            .CreateAsync(Arg.Any<CreateBeanDTO>(), Arg.Any<long>(), Arg.Any<CancellationToken>())
             .ThrowsAsyncForAnyArgs(thrownException);
 
-        var beanDto = new BeanDTO()
+        var beanDto = new CreateBeanDTO()
         {
             CountryName = "Peru"
         };
@@ -99,10 +99,10 @@ internal class BeansInitialisationServiceTests
     {
         var beanId = Guid.NewGuid();
         _beansRepository
-            .CreateAsync(Arg.Any<BeanDTO>(), Arg.Any<long>(), Arg.Any<CancellationToken>())
+            .CreateAsync(Arg.Any<CreateBeanDTO>(), Arg.Any<long>(), Arg.Any<CancellationToken>())
             .ReturnsForAnyArgs(Task.FromResult(beanId));
 
-        var beanDto = new BeanDTO()
+        var beanDto = new CreateBeanDTO()
         {
             CountryName = "Peru"
         };

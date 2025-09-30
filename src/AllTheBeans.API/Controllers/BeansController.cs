@@ -1,4 +1,6 @@
 ﻿using AllTheBeans.API.DataModels;
+using AllTheBeans.API.Mappers;
+using AllTheBeans.Domain.Repositories;
 using AllTheBeans.Domain.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,8 +8,30 @@ namespace AllTheBeans.API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class BeansController(IBeansInitialisationService _beansInitialisationService) : ControllerBase
+public class BeansController(
+    IBeansRepository _beansRepository,
+    IBeansMapper _beansMapper,
+    IBeansInitialisationService _beansInitialisationService) : ControllerBase
 {
+    [HttpGet]
+    public async Task<IActionResult> GetAll(
+        [FromQuery] PaginationParameters paginationParameters, 
+        CancellationToken cancellationToken)
+    {
+        var beans = await _beansRepository.GetAllAsync(
+            paginationParameters.PageNumber, 
+            paginationParameters.PageSize, 
+            cancellationToken);
+        var totalBeans = await _beansRepository.CountAllAsync(cancellationToken);
+
+        var result = new BeansResponse()
+        {
+            Beans = [.. beans.Select(_beansMapper.ToBeanResponse)],
+            Total = totalBeans
+        };
+        return Ok(result);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create(
         [FromBody] CreateBeanPayload payload, 

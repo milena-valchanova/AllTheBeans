@@ -10,7 +10,7 @@ internal class BeansInitialisationService(
     IBeansRepository _beansRepository, 
     ICountriesRepository _countriesRepository) : IBeansInitialisationService
 {
-    public async Task<Guid> InitiliseAsync(IBeanDTO beanDTO, CancellationToken cancellationToken = default)
+    public async Task<Guid> InitiliseAsync(ICreateBeanDTO beanDTO, CancellationToken cancellationToken = default)
     {
         await using var transaction = await _context.Database
             .BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);

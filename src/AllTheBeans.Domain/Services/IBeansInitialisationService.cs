@@ -4,5 +4,5 @@ namespace AllTheBeans.Domain.Services;
 
 public interface IBeansInitialisationService
 {
-    Task<Guid> InitiliseAsync(IBeanDTO beanDTO, CancellationToken cancellationToken = default);
+    Task<Guid> InitiliseAsync(ICreateBeanDTO beanDTO, CancellationToken cancellationToken = default);
 }

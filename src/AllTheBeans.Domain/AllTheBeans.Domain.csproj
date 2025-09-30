@@ -11,7 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-	<InternalsVisibleTo Include="AllTheBeans.Domain.Tests" />
+	<InternalsVisibleTo Include="AllTheBeans.API.UnitTests" />
+	<InternalsVisibleTo Include="AllTheBeans.Domain.UnitTests" />
 	<InternalsVisibleTo Include="AllTheBeans.Infrastructure.IntegrationTests" />
   </ItemGroup>
 

@@ -11,7 +11,7 @@ using NSubstitute;
 using NSubstitute.ClearExtensions;
 using System.Net;
 
-namespace AllTheBeans.API.IntegrationTests.BeansControllerTests;
+namespace AllTheBeans.API.IntegrationTests.BeansControllerTests.POST;
 
 [TestFixture(TestOf = typeof(BeansController))]
 internal class ValidationTests
@@ -62,7 +62,7 @@ internal class ValidationTests
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         await _beansInitialisationService
             .Received(1)
-            .InitiliseAsync(Arg.Any<IBeanDTO>(), Arg.Any<CancellationToken>());
+            .InitiliseAsync(Arg.Any<ICreateBeanDTO>(), Arg.Any<CancellationToken>());
     }
 
     [Test]
@@ -78,7 +78,7 @@ internal class ValidationTests
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         await _beansInitialisationService
             .DidNotReceiveWithAnyArgs()
-            .InitiliseAsync(Arg.Any<IBeanDTO>(), Arg.Any<CancellationToken>());
+            .InitiliseAsync(Arg.Any<ICreateBeanDTO>(), Arg.Any<CancellationToken>());
 
         await ResponseAssertionHelper.VerifyBadRequest(response, file);
     }

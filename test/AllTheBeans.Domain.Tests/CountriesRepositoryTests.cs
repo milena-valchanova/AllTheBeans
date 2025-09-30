@@ -2,7 +2,7 @@
 using AllTheBeans.Domain.Repositories.Implementations;
 using Microsoft.EntityFrameworkCore;
 
-namespace AllTheBeans.Domain.Tests;
+namespace AllTheBeans.Domain.UnitTests;
 
 [TestFixture(TestOf = typeof(CountriesRepository))]
 internal class CountriesRepositoryTests

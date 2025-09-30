@@ -12,7 +12,7 @@ using NSubstitute.ClearExtensions;
 using NSubstitute.ExceptionExtensions;
 using System.Net;
 
-namespace AllTheBeans.API.IntegrationTests.BeansControllerTests;
+namespace AllTheBeans.API.IntegrationTests.BeansControllerTests.POST;
 internal class HttpResponseTests
 {
     private const string TestFilesLocation = "Beans\\POST";
@@ -67,7 +67,7 @@ internal class HttpResponseTests
     public async Task DuplicatedBean_Should_ReturnCoflict()
     {
         _beansInitialisationService
-            .InitiliseAsync(Arg.Any<IBeanDTO>(), Arg.Any<CancellationToken>())
+            .InitiliseAsync(Arg.Any<ICreateBeanDTO>(), Arg.Any<CancellationToken>())
             .ThrowsAsyncForAnyArgs(new UniqueConstraintException());
         var file = TestPayloadProvider.GetFirstValidPayloadFilePath(TestFilesLocation);
         using var content = await ContentBuilder.BuildJsonContentFromFile(file);
@@ -84,7 +84,7 @@ internal class HttpResponseTests
     {
         var beanId = Guid.NewGuid();
         _beansInitialisationService
-            .InitiliseAsync(Arg.Any<IBeanDTO>(), Arg.Any<CancellationToken>())
+            .InitiliseAsync(Arg.Any<ICreateBeanDTO>(), Arg.Any<CancellationToken>())
             .ReturnsForAnyArgs(Task.FromResult(beanId));
         var file = TestPayloadProvider.GetFirstValidPayloadFilePath(TestFilesLocation);
         using var content = await ContentBuilder.BuildJsonContentFromFile(file);
@@ -101,7 +101,7 @@ internal class HttpResponseTests
     {
         var exception = new Exception("Something went wrong");
         _beansInitialisationService
-            .InitiliseAsync(Arg.Any<IBeanDTO>(), Arg.Any<CancellationToken>())
+            .InitiliseAsync(Arg.Any<ICreateBeanDTO>(), Arg.Any<CancellationToken>())
             .ThrowsAsyncForAnyArgs(exception);
         var file = TestPayloadProvider.GetFirstValidPayloadFilePath(TestFilesLocation);
         using var content = await ContentBuilder.BuildJsonContentFromFile(file);

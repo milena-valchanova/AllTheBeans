@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 
 namespace AllTheBeans.API.DataModels;
 
-public class CreateBeanPayload : IBeanDTO, IValidatableObject
+public class CreateBeanPayload : ICreateBeanDTO, IValidatableObject
 {
     [Required]
     [JsonPropertyName("index")]
@@ -46,9 +46,9 @@ public class CreateBeanPayload : IBeanDTO, IValidatableObject
     [JsonPropertyName("country")]
     public string CountryName { get; set; } = string.Empty;
 
-    uint IBeanDTO.Index => Index!.Value;
+    uint ICreateBeanDTO.Index => Index!.Value;
 
-    decimal IBeanDTO.Cost => Cost!.Value;
+    decimal ICreateBeanDTO.Cost => Cost!.Value;
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {

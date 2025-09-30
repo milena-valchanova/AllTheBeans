@@ -1,14 +1,5 @@
-﻿using AllTheBeans.Domain.Enums;
-
-namespace AllTheBeans.Domain.DataModels;
-public interface IBeanDTO
+﻿namespace AllTheBeans.Domain.DataModels;
+public interface IBeanDTO : ICreateBeanDTO
 {
-    uint Index { get; }
-    bool IsBOTD { get; }
-    decimal Cost { get; }
-    string ImageName { get; }
-    BeanColour Colour { get; }
-    string Name { get; }
-    string Description { get; }
-    string CountryName { get; }
+    Guid Id { get; }
 }
