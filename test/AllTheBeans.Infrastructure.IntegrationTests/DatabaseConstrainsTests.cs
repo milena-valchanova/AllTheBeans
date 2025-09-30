@@ -127,6 +127,36 @@ internal class DatabaseConstrainsTests
     }
 
     [Test]
+    [Description("An exception should be thrown when trying to add a bean with duplicated name")]
+    public async Task AnException_ShouldBe_Thrown_When_TryingToAddABeanWithDuplicatedName()
+    {
+        var bean = new Bean()
+        {
+            Name = "Duplicated",
+            Country = new Country
+            {
+                Name = "Peru"
+            }
+        };
+        _context.Beans.Add(bean);
+        await _context.SaveChangesAsync();
+
+        var duplicatedBean = new Bean()
+        {
+            Name = bean.Name
+        };
+        _context.Beans.Add(duplicatedBean);
+        var exception = Assert.ThrowsAsync<UniqueConstraintException>(
+                    () => _context.SaveChangesAsync());
+
+        using var _ = Assert.EnterMultipleScope();
+        Assert.That(exception.InnerException, Is.Not.Null);
+        Assert.That(exception.InnerException, Is.InstanceOf<PostgresException>());
+        var expectedErrorMessage = "23505: duplicate key value violates unique constraint \"IX_Beans_Name\"";
+        Assert.That(exception.InnerException.Message, Does.Contain(expectedErrorMessage));
+    }
+
+    [Test]
     [Description("Entities should be created successfully when all properties are within their limits")]
     public void Entities_ShouldBe_CreatedSuccessfully_When_AllPropertiesAreWithinTheirLimits()
     {
