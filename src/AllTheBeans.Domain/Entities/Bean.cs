@@ -1,9 +1,13 @@
 ﻿using AllTheBeans.Domain.Entities.Constants;
 using AllTheBeans.Domain.Enums;
 using AllTheBeans.Domain.Exceptions;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace AllTheBeans.Domain.Entities;
+
+
+[Index(nameof(Name), IsUnique = true)]
 public class Bean
 {
     public Guid Id { get; set; }

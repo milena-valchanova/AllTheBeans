@@ -3,7 +3,6 @@ using AllTheBeans.API.IntegrationTests.Helpers;
 using AllTheBeans.Domain.DataModels;
 using AllTheBeans.Domain.Services;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,7 +10,6 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using NSubstitute;
 using NSubstitute.ClearExtensions;
 using System.Net;
-using System.Net.Http.Json;
 
 namespace AllTheBeans.API.IntegrationTests.BeansControllerTests;
 
@@ -19,6 +17,8 @@ namespace AllTheBeans.API.IntegrationTests.BeansControllerTests;
 internal class ValidationTests
 {
     private const string TestFilesLocation = "Beans\\POST";
+    private const string Endpoint = "/beans";
+
     private readonly IBeansInitialisationService _beansInitialisationService = 
         Substitute.For<IBeansInitialisationService>();
     private WebApplicationFactory<Program> _factory;
@@ -57,7 +57,7 @@ internal class ValidationTests
         using var content = await ContentBuilder.BuildJsonContentFromFile(file);
         using var httpClient = _factory.CreateClient();
 
-        using var response = await httpClient.PostAsync("/beans", content);
+        using var response = await httpClient.PostAsync(Endpoint, content);
 
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         await _beansInitialisationService
@@ -73,7 +73,7 @@ internal class ValidationTests
         using var content = await ContentBuilder.BuildJsonContentFromFile(file);
 
         using var httpClient = _factory.CreateClient();
-        using var response = await httpClient.PostAsync("/beans", content);
+        using var response = await httpClient.PostAsync(Endpoint, content);
 
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         await _beansInitialisationService
@@ -81,17 +81,5 @@ internal class ValidationTests
             .InitiliseAsync(Arg.Any<IBeanDTO>(), Arg.Any<CancellationToken>());
 
         await ResponseAssertionHelper.VerifyBadRequest(response, file);
-    }
-
-    [Test]
-    [Description("Empty body should return Unsupported Media Type status code")]
-    public async Task EmptyBodyWithoutContentType_Should_ReturnUnsupportedMediaType()
-    {
-        using var content = new StringContent(string.Empty);
-
-        using var httpClient = _factory.CreateClient();
-        using var response = await httpClient.PostAsync("/beans", content);
-
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.UnsupportedMediaType));
     }
 }

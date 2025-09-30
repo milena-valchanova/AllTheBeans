@@ -1,4 +1,5 @@
 ﻿using AllTheBeans.Domain;
+using EntityFramework.Exceptions.PostgreSQL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +22,7 @@ public static class ServiceRegistration
             {
                 npgSqlOptions.MigrationsAssembly(typeof(ServiceRegistration).Assembly.FullName);
             });
+            options.UseExceptionProcessor();
         });
         return services;
     }

@@ -1,3 +1,4 @@
+using AllTheBeans.API.Middleware;
 using AllTheBeans.Domain;
 using AllTheBeans.Infrastructure;
 
@@ -18,6 +19,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.UseMiddleware<CustomExceptionHandlerMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {

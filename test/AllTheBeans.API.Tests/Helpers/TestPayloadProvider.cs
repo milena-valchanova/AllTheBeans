@@ -3,6 +3,11 @@
 namespace AllTheBeans.API.IntegrationTests.Helpers;
 internal static class TestPayloadProvider
 {
+    public static string GetFirstValidPayloadFilePath(string type)
+        => EnumeratePayloadFilePaths("Valid", type, "*.json")
+            .FirstOrDefault()
+            ?? throw new InvalidOperationException("No valid data was found");
+
     public static IEnumerable<string> GetValidPayloadFilePaths(string type)
         => EnumeratePayloadFilePaths("Valid", type, "*.json");
 
