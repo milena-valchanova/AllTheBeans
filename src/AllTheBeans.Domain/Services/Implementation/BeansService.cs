@@ -95,7 +95,7 @@ internal class BeansService(
         return await executionStrategy.ExecuteAsync(async () =>
         {
             await using var transaction = await _context.Database
-            .BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
+                .BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
             var bean = await _beansRepository.GetByIdOrDefaultAsync(id, cancellationToken);
             var country = await _countriesRepository.GetOrCreateAsync(beanDTO.CountryName, cancellationToken);
             Guid result;
@@ -106,7 +106,7 @@ internal class BeansService(
             else
             {
                 result = bean.Id;
-                await _beansRepository.UpdateAsync(bean, beanDTO, country.Id, cancellationToken);
+                await _beansRepository.UpdateAsync(bean.Id, beanDTO, country.Id, cancellationToken);
             }
             await transaction.CommitAsync(cancellationToken);
             return await GetByIdAsync(result, cancellationToken);

@@ -69,8 +69,8 @@ internal class BeansRepository(BeansContext _context) : IBeansRepository
             ?? throw new KeyNotFoundException($"Bean with id {id} was not found");
 
     public Task<Bean?> GetByIdOrDefaultAsync(Guid id, CancellationToken cancellationToken = default)
-    => _context.Beans
-        .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+        => _context.Beans
+            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
 
     public async Task DeleteAsync(Bean bean, CancellationToken cancellationToken = default)
     {
@@ -82,7 +82,6 @@ internal class BeansRepository(BeansContext _context) : IBeansRepository
     {
         var bean = new Bean()
         {
-            Id = Guid.NewGuid(),
             Index = beanDTO.Index,
             IsBOTD = beanDTO.IsBOTD,
             Cost = beanDTO.Cost,
@@ -97,8 +96,9 @@ internal class BeansRepository(BeansContext _context) : IBeansRepository
         return bean.Id;
     }
 
-    public async Task UpdateAsync(Bean bean, ICreateOrUpdateBeanDTO beanDTO, long countryId, CancellationToken cancellationToken = default)
+    public async Task UpdateAsync(Guid beanId, ICreateOrUpdateBeanDTO beanDTO, long countryId, CancellationToken cancellationToken = default)
     {
+        var bean = await _context.Beans.FindAsync(beanId);
         bean.Colour = beanDTO.Colour;
         bean.Name = beanDTO.Name;
         bean.Description = beanDTO.Description;
