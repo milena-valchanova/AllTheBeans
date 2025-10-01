@@ -120,7 +120,7 @@ internal class ExternalDependenciesTests
         var bean = result.Beans.Single();
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(bean.Id, Is.EqualTo(seededBean.Id.ToString().Replace("-", string.Empty)));
+            Assert.That(bean.Id, Is.EqualTo(seededBean.Id));
             Assert.That(bean.Index, Is.EqualTo(seededBean.Index));
             Assert.That(bean.Name, Is.EqualTo(seededBean.Name));
             Assert.That(bean.Description, Is.EqualTo(seededBean.Description));

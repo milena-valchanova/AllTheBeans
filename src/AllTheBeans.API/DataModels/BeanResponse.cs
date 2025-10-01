@@ -1,12 +1,11 @@
-﻿using AllTheBeans.Domain.Enums;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace AllTheBeans.API.DataModels;
 
 public class BeanResponse
 {
     [JsonPropertyName("_id")]
-    public string Id { get; set; } = string.Empty;
+    public Guid Id { get; set; }
 
     [JsonPropertyName("index")]
     public uint Index { get; set; }

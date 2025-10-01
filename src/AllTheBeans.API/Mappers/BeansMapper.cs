@@ -20,7 +20,7 @@ internal class BeansMapper(IConfiguration configuration) : IBeansMapper
     public BeanResponse ToBeanResponse(IBeanDTO beanDTO)
         => new ()
         {
-            Id = beanDTO.Id.ToString("N"),
+            Id = beanDTO.Id,
             Name = beanDTO.Name,
             Description = beanDTO.Description,
             Country = beanDTO.CountryName,

@@ -118,7 +118,7 @@ internal class ExternalDependenciesTests
         Assert.That(result, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(result.Id, Is.EqualTo(seededBean.Id.ToString().Replace("-", string.Empty)));
+            Assert.That(result.Id, Is.EqualTo(seededBean.Id));
             Assert.That(result.Index, Is.EqualTo(seededBean.Index));
             Assert.That(result.Name, Is.EqualTo(seededBean.Name));
             Assert.That(result.Description, Is.EqualTo(seededBean.Description));
@@ -164,7 +164,7 @@ internal class ExternalDependenciesTests
         }
         var result = await Task.WhenAll(tasks);
 
-        var uniqueIds = new HashSet<string>();
+        var uniqueIds = new HashSet<Guid>();
 
         using (Assert.EnterMultipleScope())
         {
