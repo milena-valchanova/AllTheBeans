@@ -85,7 +85,7 @@ internal class BeansServiceExceptionsTests
             CountryName = "Peru"
         };
 
-        var exception = Assert.ThrowsAsync<Exception>(() => _service.InitiliseAsync(beanDto));
+        var exception = Assert.ThrowsAsync<Exception>(() => _service.CreateAsync(beanDto));
 
         Assert.That(exception, Is.EqualTo(thrownException));
         var numberOfCountriesInDb = await _context.Countries.CountAsync();

@@ -43,8 +43,9 @@ public class BeansController(
         [FromBody] CreateBeanPayload payload, 
         CancellationToken cancellationToken)
     {
-        var beanId = await _beansService.InitiliseAsync(payload, cancellationToken);
-        return Ok(beanId);
+        var bean = await _beansService.CreateAsync(payload, cancellationToken);
+        var result = _beansMapper.ToBeanResponse(bean);
+        return Ok(result);
     }
 
     [HttpDelete("{id}")]

@@ -33,14 +33,14 @@ internal class BeansService(
     public Task<int> CountAllAsync(CancellationToken cancellationToken = default)
         => _beansRepository.CountAllAsync(cancellationToken);
 
-    public async Task<Guid> InitiliseAsync(ICreateBeanDTO beanDTO, CancellationToken cancellationToken = default)
+    public async Task<IBeanDTO> CreateAsync(ICreateBeanDTO beanDTO, CancellationToken cancellationToken = default)
     {
         await using var transaction = await _context.Database
             .BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
         var country = await _countriesRepository.GetOrCreateAsync(beanDTO.CountryName, cancellationToken);
         var beanId = await _beansRepository.CreateAsync(beanDTO, country.Id, cancellationToken);
         await transaction.CommitAsync(cancellationToken);
-        return beanId;
+        return await GetByIdAsync(beanId, cancellationToken);
     }
 
     public async Task DeleteBeanAsync(Guid id, CancellationToken cancellationToken = default)

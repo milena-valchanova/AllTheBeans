@@ -10,7 +10,7 @@ public interface IBeansService
 
     Task<IBeanDTO> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
-    Task<Guid> InitiliseAsync(ICreateBeanDTO beanDTO, CancellationToken cancellationToken = default);
+    Task<IBeanDTO> CreateAsync(ICreateBeanDTO beanDTO, CancellationToken cancellationToken = default);
 
     Task DeleteBeanAsync(Guid id, CancellationToken cancellationToken = default);
 }

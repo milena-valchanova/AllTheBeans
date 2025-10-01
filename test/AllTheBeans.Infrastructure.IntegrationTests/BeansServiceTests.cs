@@ -76,7 +76,7 @@ internal class BeansServiceTests
             CountryName = "Peru"
         };
 
-        var _ = await _service.InitiliseAsync(beanDto);
+        var _ = await _service.CreateAsync(beanDto);
 
         var countriesInDb = await _context.Countries.ToListAsync();
         Assert.That(countriesInDb, Has.Count.EqualTo(1));

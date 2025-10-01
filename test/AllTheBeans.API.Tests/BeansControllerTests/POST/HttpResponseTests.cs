@@ -67,7 +67,7 @@ internal class HttpResponseTests
     public async Task DuplicatedBean_Should_ReturnCoflict()
     {
         _beansInitialisationService
-            .InitiliseAsync(Arg.Any<ICreateBeanDTO>(), Arg.Any<CancellationToken>())
+            .CreateAsync(Arg.Any<ICreateBeanDTO>(), Arg.Any<CancellationToken>())
             .ThrowsAsyncForAnyArgs(new UniqueConstraintException());
         var file = TestPayloadProvider.GetFirstValidPayloadFilePath(TestFilesLocation);
         using var content = await ContentBuilder.BuildJsonContentFromFile(file);
@@ -82,10 +82,9 @@ internal class HttpResponseTests
     [Description("Valid bean should return HTTP status code OK with the Id of the created entity")]
     public async Task ValidBean_Should_ReturnHttpStatusCodeOkWithIdOfTheCreatedEntity()
     {
-        var beanId = Guid.NewGuid();
         _beansInitialisationService
-            .InitiliseAsync(Arg.Any<ICreateBeanDTO>(), Arg.Any<CancellationToken>())
-            .ReturnsForAnyArgs(Task.FromResult(beanId));
+            .CreateAsync(Arg.Any<ICreateBeanDTO>(), Arg.Any<CancellationToken>())
+            .ReturnsForAnyArgs(Task.FromResult(new BeanDTO() as IBeanDTO));
         var file = TestPayloadProvider.GetFirstValidPayloadFilePath(TestFilesLocation);
         using var content = await ContentBuilder.BuildJsonContentFromFile(file);
 
@@ -101,7 +100,7 @@ internal class HttpResponseTests
     {
         var exception = new Exception("Something went wrong");
         _beansInitialisationService
-            .InitiliseAsync(Arg.Any<ICreateBeanDTO>(), Arg.Any<CancellationToken>())
+            .CreateAsync(Arg.Any<ICreateBeanDTO>(), Arg.Any<CancellationToken>())
             .ThrowsAsyncForAnyArgs(exception);
         var file = TestPayloadProvider.GetFirstValidPayloadFilePath(TestFilesLocation);
         using var content = await ContentBuilder.BuildJsonContentFromFile(file);
