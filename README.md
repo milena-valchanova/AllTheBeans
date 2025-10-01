@@ -29,3 +29,5 @@
         - if running in Release mode - configure BeansDbConnectionString in appsettings.json by replacing '<userId>' and '<password>'
 
 - available endpoints could be found in this [Postman collection](AllTheBeans.postman_collection.json)
+
+- ensure docker is running in order to run Integration Tests
