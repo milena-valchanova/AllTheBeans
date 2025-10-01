@@ -12,7 +12,7 @@ namespace AllTheBeans.API.Controllers;
 public class BeansController(
     IBeansRepository _beansRepository,
     IBeansMapper _beansMapper,
-    IBeansInitialisationService _beansInitialisationService) : ControllerBase
+    IBeansService _beansService) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll(
@@ -46,7 +46,14 @@ public class BeansController(
         [FromBody] CreateBeanPayload payload, 
         CancellationToken cancellationToken)
     {
-        var beanId = await _beansInitialisationService.InitiliseAsync(payload, cancellationToken);
+        var beanId = await _beansService.InitiliseAsync(payload, cancellationToken);
         return Ok(beanId);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
+    {
+        await _beansService.DeleteBeanAsync(id, cancellationToken);
+        return NoContent();
     }
 }

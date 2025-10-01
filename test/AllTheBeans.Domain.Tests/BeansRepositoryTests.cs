@@ -164,6 +164,58 @@ internal class BeansRepositoryTests
     }
 
     [Test]
+    [Description("GetByIdTrackedAsync should return correct entity")]
+    public async Task GetByIdTrackedAsync_Should_ReturnCorrectEntity()
+    {
+        var seededBean = new Bean()
+        {
+            Country = new Country()
+            {
+                Name = "Peru"
+            }
+        };
+        await _context.AddAsync(seededBean);
+        await _context.SaveChangesAsync();
+
+        var result = await BeansRepository.GetByIdTrackedAsync(seededBean.Id);
+
+        Assert.That(result, Is.EqualTo(seededBean));
+    }
+
+    [Test]
+    [Description("GetByIdTrackedAsync should throw KeyNotFoundException when bean is not found")]
+    public void GetByIdTrackedAsync_Should_ThrowKeyNotFoundException_When_BeanIsNotFound()
+    {
+        var notExistingId = Guid.NewGuid();
+
+        var exception = Assert.ThrowsAsync<KeyNotFoundException>(
+            () => BeansRepository.GetByIdTrackedAsync(notExistingId));
+
+        var expectedError = $"Bean with id {notExistingId} was not found";
+        Assert.That(exception.Message, Is.EqualTo(expectedError));
+    }
+
+    [Test]
+    [Description("DeleteAsync should remove correct entity")]
+    public async Task DeleteAsync_Should_RemoveCorrectEntity()
+    {
+        var seededBean = new Bean()
+        {
+            Country = new Country()
+            {
+                Name = "Peru"
+            }
+        };
+        await _context.AddAsync(seededBean);
+        await _context.SaveChangesAsync();
+
+        await BeansRepository.DeleteAsync(seededBean);
+
+        Assert.That(_context.Beans.Count(), Is.EqualTo(0));
+        Assert.That(_context.Countries.Count(), Is.EqualTo(1));
+    }
+
+    [Test]
     [Description("Bean entity should be successfully populated with provided properties")]
     public async Task BeanEntity_ShouldBe_SuccessfullyPopulatedWithProvidedProperties()
     {

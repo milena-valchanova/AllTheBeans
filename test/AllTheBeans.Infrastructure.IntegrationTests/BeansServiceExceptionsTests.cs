@@ -11,13 +11,13 @@ using NSubstitute.ExceptionExtensions;
 using Testcontainers.PostgreSql;
 
 namespace AllTheBeans.Infrastructure.IntegrationTests;
-internal class BeansInitialisationServiceTests
+internal class BeansServiceExceptionsTests
 {
     private PostgreSqlContainer _postgresCotainer;
     private BeansContext _context;
 
     private readonly IBeansRepository _beansRepository = Substitute.For<IBeansRepository>();
-    private IBeansInitialisationService _service;
+    private IBeansService _service;
 
     [OneTimeSetUp]
     public async Task OneTimeSetUp()
@@ -27,7 +27,6 @@ internal class BeansInitialisationServiceTests
             .WithCleanUp(true)
             .Build();
         await _postgresCotainer.StartAsync();
-
     }
 
     [SetUp]
@@ -49,7 +48,7 @@ internal class BeansInitialisationServiceTests
         _context = serviceProvider.GetRequiredService<BeansContext>();
         await _context.Database.EnsureCreatedAsync();
 
-        _service = serviceProvider.GetRequiredService<IBeansInitialisationService>();
+        _service = serviceProvider.GetRequiredService<IBeansService>();
     }
 
     [TearDown]
@@ -91,27 +90,5 @@ internal class BeansInitialisationServiceTests
         Assert.That(exception, Is.EqualTo(thrownException));
         var numberOfCountriesInDb = await _context.Countries.CountAsync();
         Assert.That(numberOfCountriesInDb, Is.Zero);
-    }
-
-    [Test]
-    [Description("Country should be stored when storing bean succeeds")]
-    public async Task Country_ShouldBe_Created_When_StoringBeanSucceeds()
-    {
-        var beanId = Guid.NewGuid();
-        _beansRepository
-            .CreateAsync(Arg.Any<CreateBeanDTO>(), Arg.Any<long>(), Arg.Any<CancellationToken>())
-            .ReturnsForAnyArgs(Task.FromResult(beanId));
-
-        var beanDto = new CreateBeanDTO()
-        {
-            CountryName = "Peru"
-        };
-
-        var result = await _service.InitiliseAsync(beanDto);
-
-        Assert.That(result, Is.EqualTo(beanId));
-        var countriesInDb = await _context.Countries.ToListAsync();
-        Assert.That(countriesInDb, Has.Count.EqualTo(1));
-        Assert.That(countriesInDb[0].Name, Is.EqualTo(beanDto.CountryName));
     }
 }

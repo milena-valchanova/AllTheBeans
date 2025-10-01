@@ -19,8 +19,8 @@ internal class ValidationTests
     private const string TestFilesLocation = "Beans\\POST";
     private const string Endpoint = "/beans";
 
-    private readonly IBeansInitialisationService _beansInitialisationService = 
-        Substitute.For<IBeansInitialisationService>();
+    private readonly IBeansService _beansInitialisationService = 
+        Substitute.For<IBeansService>();
     private WebApplicationFactory<Program> _factory;
 
     [OneTimeSetUp]

@@ -2,6 +2,7 @@
 using AllTheBeans.API.Mappers;
 using AllTheBeans.Domain.DataModels;
 using AllTheBeans.Domain.Repositories;
+using AllTheBeans.Domain.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -11,15 +12,13 @@ using NSubstitute;
 using NSubstitute.ClearExtensions;
 using System.Net;
 
-namespace AllTheBeans.API.IntegrationTests.BeansControllerTests.GET_ById;
+namespace AllTheBeans.API.IntegrationTests.BeansControllerTests.DELETE;
 
 [TestFixture(TestOf = typeof(BeansController))]
 internal class ValidationTests
 {
-    private readonly IBeansRepository _beansRepository = 
-        Substitute.For<IBeansRepository>();
-    private readonly IBeansMapper _beansMapper =
-        Substitute.For<IBeansMapper>();
+    private readonly IBeansService _beansService =
+        Substitute.For<IBeansService>();
     private WebApplicationFactory<Program> _factory;
 
     [OneTimeSetUp]
@@ -31,8 +30,7 @@ internal class ValidationTests
                 builder.UseEnvironment("Test");
                 builder.ConfigureTestServices(services =>
                 {
-                    services.Replace(ServiceDescriptor.Scoped(_ => _beansRepository));
-                    services.Replace(ServiceDescriptor.Singleton(_ => _beansMapper));
+                    services.Replace(ServiceDescriptor.Scoped(_ => _beansService));
                 });
             });
     }
@@ -40,32 +38,13 @@ internal class ValidationTests
     [TearDown]
     public void TearDown()
     {
-        _beansRepository.ClearSubstitute();
-        _beansMapper.ClearSubstitute();
+        _beansService.ClearSubstitute();
     }
 
     [OneTimeTearDown]
     public async Task OneTimeTearDown()
     {
         await _factory.DisposeAsync();
-    }
-
-    [Test]
-    public async Task ValidId_Should_BeAccepted()
-    {
-        _beansRepository
-            .GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
-            .ReturnsForAnyArgs(Task.FromResult(Substitute.For<IBeanDTO>()));
-
-        using var httpClient = _factory.CreateClient();
-        var id = Guid.NewGuid();
-        var endpoint = $"/beans/{id}";
-        using var response = await httpClient.GetAsync(endpoint);
-
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
-        await _beansRepository
-            .Received(1)
-            .GetByIdAsync(id, Arg.Any<CancellationToken>());
     }
 
     [TestCase("/beans/123")]
@@ -75,7 +54,7 @@ internal class ValidationTests
     {
         using var httpClient = _factory.CreateClient();
 
-        using var response = await httpClient.GetAsync(endpoint);
+        using var response = await httpClient.DeleteAsync(endpoint);
 
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
     }

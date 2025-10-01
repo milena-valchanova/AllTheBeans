@@ -1,7 +1,9 @@
 ﻿using AllTheBeans.Domain.DataModels;
 using AllTheBeans.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
+using System.Threading;
 
 namespace AllTheBeans.Domain.Repositories.Implementations;
 internal class BeansRepository(BeansContext _context) : IBeansRepository
@@ -27,9 +29,7 @@ internal class BeansRepository(BeansContext _context) : IBeansRepository
             throw new ArgumentException($"{nameof(pageSize)} must have positive value");
 
         var entitiesToSkip = (pageNumber - 1) * pageSize;
-        return _context.Beans
-            .Include(p => p.Country)
-            .AsNoTracking()
+        return GetBeansWithCountries()
             .Select(_beanSelector)
             .OrderBy(p => p.Id)
             .Skip(entitiesToSkip)
@@ -37,17 +37,31 @@ internal class BeansRepository(BeansContext _context) : IBeansRepository
             .ToListAsync(cancellationToken);
     }
 
+    private IQueryable<Bean> GetBeansWithCountries()
+        => _context.Beans
+            .Include(p => p.Country)
+            .AsNoTracking();
+
     public Task<int> CountAllAsync(CancellationToken cancellationToken = default)
         => _context.Beans.CountAsync(cancellationToken);
 
     public async Task<IBeanDTO> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
-        => await _context.Beans
-            .Include(p => p.Country)
-            .AsNoTracking()
+        => await GetBeansWithCountries()
             .Where(p => p.Id == id)
             .Select(_beanSelector)
             .FirstOrDefaultAsync(cancellationToken)
         ?? throw new KeyNotFoundException($"Bean with id {id} was not found");
+
+    public async Task<Bean> GetByIdTrackedAsync(Guid id, CancellationToken cancellationToken = default)
+        => await _context.Beans
+            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken)
+            ?? throw new KeyNotFoundException($"Bean with id {id} was not found");
+
+    public async Task DeleteAsync(Bean bean, CancellationToken cancellationToken = default)
+    {
+        _context.Beans.Remove(bean);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
 
     public async Task<Guid> CreateAsync(ICreateBeanDTO beanDTO, long countryId, CancellationToken cancellationToken = default)
     {
