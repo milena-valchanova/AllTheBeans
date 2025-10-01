@@ -81,7 +81,7 @@ internal class BeansService(
         return await executionStrategy.ExecuteAsync(async () =>
         {
             await using var transaction = await _context.Database
-            .BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
+                .BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
             var country = await _countriesRepository.GetOrCreateAsync(beanDTO.CountryName, cancellationToken);
             var beanId = await _beansRepository.CreateAsync(beanDTO, country.Id, cancellationToken);
             await transaction.CommitAsync(cancellationToken);
@@ -119,7 +119,7 @@ internal class BeansService(
         await executionStrategy.ExecuteAsync(async () =>
         {
             await using var transaction = await _context.Database
-            .BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
+                .BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
             var bean = await _beansRepository.GetByIdAsync(id, cancellationToken);
             var countryId = bean.CountryId;
             await _beansRepository.DeleteAsync(bean, cancellationToken);
