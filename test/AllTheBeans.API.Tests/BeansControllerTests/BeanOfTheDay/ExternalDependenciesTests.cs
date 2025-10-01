@@ -43,7 +43,9 @@ internal class ExternalDependenciesTests
                     {
                         ["ConnectionStrings:BeansDbConnectionString"] = _postgresCotainer.GetConnectionString(),
                         ["ImagesLocation"] = "https://some.location.com/",
-                        ["CurrencyCulture"] = "en-GB"
+                        ["CurrencyCulture"] = "en-GB",
+                        ["RateLimit:PermitLimit"] = "50",
+                        ["RateLimit:QueueLimit"] = "100"
                     })
                     .Build();
                 builder.UseConfiguration(configuration);
