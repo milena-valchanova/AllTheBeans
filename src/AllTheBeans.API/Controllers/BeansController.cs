@@ -12,6 +12,7 @@ public class BeansController(
     IBeansService _beansService) : ControllerBase
 {
     [HttpGet]
+    [ProducesResponseType<BeansResponse>(StatusCodes.Status200OK, "application/json")]
     public async Task<IActionResult> GetAll(
         [FromQuery] GetAllParameters getAllParameters,
         CancellationToken cancellationToken)
@@ -30,6 +31,8 @@ public class BeansController(
     }
 
     [HttpGet("of-the-day")]
+    [ProducesResponseType<BeanResponse>(StatusCodes.Status200OK, "application/json")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> BeanOfTheDay(CancellationToken cancellationToken)
     {
         var currentDay = DateOnly.FromDateTime(DateTime.UtcNow);
@@ -39,6 +42,8 @@ public class BeansController(
     }
 
     [HttpGet("{id}")]
+    [ProducesResponseType<BeanResponse>(StatusCodes.Status200OK, "application/json")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
     {
         var bean = await _beansService.GetByIdAsync(id, cancellationToken);
@@ -47,6 +52,9 @@ public class BeansController(
     }
 
     [HttpPost]
+    [Consumes("application/json")]
+    [ProducesResponseType<BeanResponse>(StatusCodes.Status200OK, "application/json")]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Create(
         [FromBody] CreateOrUpdateBeanPayload payload, 
         CancellationToken cancellationToken)
@@ -57,6 +65,10 @@ public class BeansController(
     }
 
     [HttpPut("{id}")]
+    [Consumes("application/json")]
+    [ProducesResponseType<BeanResponse>(StatusCodes.Status200OK, "application/json")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Update(
         Guid id,
         [FromBody] CreateOrUpdateBeanPayload payload,
@@ -68,6 +80,8 @@ public class BeansController(
     }
 
     [HttpDelete("{id}")]
+    [ProducesResponseType<BeanResponse>(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
         await _beansService.DeleteBeanAsync(id, cancellationToken);
