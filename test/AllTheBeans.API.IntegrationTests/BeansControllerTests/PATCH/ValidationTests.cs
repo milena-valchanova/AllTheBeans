@@ -11,13 +11,13 @@ using NSubstitute;
 using NSubstitute.ClearExtensions;
 using System.Net;
 
-namespace AllTheBeans.API.IntegrationTests.BeansControllerTests.POST;
+namespace AllTheBeans.API.IntegrationTests.BeansControllerTests.PATCH;
 
 [TestFixture(TestOf = typeof(BeansController))]
 internal class ValidationTests
 {
-    private const string TestFilesLocation = "Beans\\POST";
-    private const string Endpoint = "/beans";
+    private const string TestFilesLocation = "Beans\\PATCH";
+    private const string Endpoint = "/beans/0199a055-1540-77eb-8bdf-b2ff9cc37089";
 
     private readonly IBeansService _beansService = 
         Substitute.For<IBeansService>();
@@ -51,18 +51,18 @@ internal class ValidationTests
 
     [Test]
     [TestCaseSource(typeof(TestPayloadProvider), nameof(TestPayloadProvider.GetValidPayloadFilePaths), new object[] { TestFilesLocation })]
-    [Description("Valid requests should create a new bean")]
-    public async Task ValidRequests_Should_CreateANewBean(string file)
+    [Description("Valid requests should update the bean")]
+    public async Task ValidRequests_Should_UpdateTheBean(string file)
     {
         using var content = await ContentBuilder.BuildJsonContentFromFile(file);
         using var httpClient = _factory.CreateClient();
 
-        using var response = await httpClient.PostAsync(Endpoint, content);
+        using var response = await httpClient.PatchAsync(Endpoint, content);
 
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
         await _beansService
             .Received(1)
-            .CreateAsync(Arg.Any<ICreateOrUpdateBeanDTO>(), Arg.Any<CancellationToken>());
+            .UpdateAsync(Arg.Any<Guid>(), Arg.Any<IUpdateBeanDTO>(), Arg.Any<CancellationToken>());
     }
 
     [Test]
@@ -73,12 +73,12 @@ internal class ValidationTests
         using var content = await ContentBuilder.BuildJsonContentFromFile(file);
 
         using var httpClient = _factory.CreateClient();
-        using var response = await httpClient.PostAsync(Endpoint, content);
+        using var response = await httpClient.PatchAsync(Endpoint, content);
 
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         await _beansService
             .DidNotReceiveWithAnyArgs()
-            .CreateAsync(Arg.Any<ICreateOrUpdateBeanDTO>(), Arg.Any<CancellationToken>());
+            .UpdateAsync(Arg.Any<Guid>(), Arg.Any<IUpdateBeanDTO>(), Arg.Any<CancellationToken>());
 
         await ResponseAssertionHelper.VerifyBadRequest(response, file);
     }

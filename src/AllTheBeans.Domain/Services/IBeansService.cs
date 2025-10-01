@@ -18,5 +18,7 @@ public interface IBeansService
 
     Task<IBeanDTO> CreateOrUpdateAsync(Guid id, ICreateOrUpdateBeanDTO beanDTO, CancellationToken cancellationToken = default);
 
+    Task UpdateAsync(Guid id, IUpdateBeanDTO beanDTO, CancellationToken cancellationToken = default);
+
     Task DeleteBeanAsync(Guid id, CancellationToken cancellationToken = default);
 }

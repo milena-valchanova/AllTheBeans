@@ -96,17 +96,27 @@ internal class BeansRepository(BeansContext _context) : IBeansRepository
         return bean.Id;
     }
 
-    public async Task UpdateAsync(Guid beanId, ICreateOrUpdateBeanDTO beanDTO, long countryId, CancellationToken cancellationToken = default)
+    public async Task UpdateAsync(Guid beanId, IUpdateBeanDTO beanDTO, long? countryId, CancellationToken cancellationToken = default)
     {
-        var bean = await _context.Beans.FindAsync(beanId);
-        bean.Colour = beanDTO.Colour;
-        bean.Name = beanDTO.Name;
-        bean.Description = beanDTO.Description;
-        bean.Cost = beanDTO.Cost;
-        bean.Index = beanDTO.Index;
-        bean.ImageName = beanDTO.ImageName;
-        bean.IsBOTD = beanDTO.IsBOTD;
-        bean.CountryId = countryId;
+        var bean = await _context.Beans.FindAsync(beanId, cancellationToken)
+            ?? throw new KeyNotFoundException($"Bean with id {beanId} was not found");
+
+        if (beanDTO.Colour is not null)
+            bean.Colour = beanDTO.Colour.Value;
+        if (beanDTO.Name is not null)
+            bean.Name = beanDTO.Name;
+        if (beanDTO.Description is not null)
+            bean.Description = beanDTO.Description;
+        if (beanDTO.Cost is not null)
+            bean.Cost = beanDTO.Cost.Value;
+        if (beanDTO.Index is not null)
+            bean.Index = beanDTO.Index.Value;
+        if (beanDTO.ImageName is not null)
+            bean.ImageName = beanDTO.ImageName;
+        if (beanDTO.IsBOTD is not null)
+            bean.IsBOTD = beanDTO.IsBOTD.Value;
+        if (countryId is not null)
+            bean.CountryId = countryId.Value;
 
         await _context.SaveChangesAsync(cancellationToken);
     }

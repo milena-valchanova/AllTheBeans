@@ -11,4 +11,9 @@ internal class CreateOrUpdateBeanDTO : ICreateOrUpdateBeanDTO
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string CountryName { get; set; } = string.Empty;
+
+    uint? IUpdateBeanDTO.Index => Index;
+    bool? IUpdateBeanDTO.IsBOTD => IsBOTD;
+    decimal? IUpdateBeanDTO.Cost => Cost;
+    BeanColour? IUpdateBeanDTO.Colour => Colour;
 }

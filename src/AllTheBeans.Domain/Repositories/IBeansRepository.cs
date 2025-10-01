@@ -16,5 +16,5 @@ internal interface IBeansRepository
 
     Task<Guid> CreateAsync(ICreateOrUpdateBeanDTO beanDTO, long countryId, CancellationToken cancellationToken = default);
     
-    Task UpdateAsync(Guid beanId, ICreateOrUpdateBeanDTO beanDTO, long countryId, CancellationToken cancellationToken = default);
+    Task UpdateAsync(Guid beanId, IUpdateBeanDTO beanDTO, long? countryId, CancellationToken cancellationToken = default);
 }

@@ -50,6 +50,10 @@ public class CreateOrUpdateBeanPayload : ICreateOrUpdateBeanDTO, IValidatableObj
 
     decimal ICreateOrUpdateBeanDTO.Cost => Cost!.Value;
 
+    bool? IUpdateBeanDTO.IsBOTD => IsBOTD;
+
+    BeanColour? IUpdateBeanDTO.Colour => Colour;
+
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
         var regions = CultureInfo

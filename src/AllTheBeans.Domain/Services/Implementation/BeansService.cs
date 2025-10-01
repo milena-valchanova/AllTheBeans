@@ -113,6 +113,21 @@ internal class BeansService(
         });
     }
 
+    public async Task UpdateAsync(Guid id, IUpdateBeanDTO beanDTO, CancellationToken cancellationToken = default)
+    {
+        var executionStrategy = _context.Database.CreateExecutionStrategy();
+        await executionStrategy.ExecuteAsync(async () =>
+        {
+            await using var transaction = await _context.Database
+                .BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
+            var country = beanDTO.CountryName is null
+                ? null
+                : await _countriesRepository.GetOrCreateAsync(beanDTO.CountryName, cancellationToken);
+            await _beansRepository.UpdateAsync(id, beanDTO, country?.Id, cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+        });
+    }
+
     public async Task DeleteBeanAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var executionStrategy = _context.Database.CreateExecutionStrategy();

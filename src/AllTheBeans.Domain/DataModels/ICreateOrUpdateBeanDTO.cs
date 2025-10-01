@@ -1,14 +1,14 @@
 ﻿using AllTheBeans.Domain.Enums;
 
 namespace AllTheBeans.Domain.DataModels;
-public interface ICreateOrUpdateBeanDTO
+public interface ICreateOrUpdateBeanDTO : IUpdateBeanDTO
 {
-    uint Index { get; }
-    bool IsBOTD { get; }
-    decimal Cost { get; }
-    string ImageName { get; }
-    BeanColour Colour { get; }
-    string Name { get; }
-    string Description { get; }
-    string CountryName { get; }
+    new uint Index { get; }
+    new bool IsBOTD { get; }
+    new decimal Cost { get; }
+    new string ImageName { get; }
+    new BeanColour Colour { get; }
+    new string Name { get; }
+    new string Description { get; }
+    new string CountryName { get; }
 }

@@ -1,0 +1,26 @@
+{
+  "Cost": [
+    "At least one value should be provided."
+  ],
+  "Name": [
+    "At least one value should be provided."
+  ],
+  "Index": [
+    "At least one value should be provided."
+  ],
+  "Colour": [
+    "At least one value should be provided."
+  ],
+  "IsBOTD": [
+    "At least one value should be provided."
+  ],
+  "ImageName": [
+    "At least one value should be provided."
+  ],
+  "CountryName": [
+    "At least one value should be provided."
+  ],
+  "Description": [
+    "At least one value should be provided."
+  ]
+}

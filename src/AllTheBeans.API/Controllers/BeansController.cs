@@ -69,7 +69,7 @@ public class BeansController(
     [ProducesResponseType<BeanResponse>(StatusCodes.Status200OK, "application/json")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> Update(
+    public async Task<IActionResult> CreateOrUpdate(
         Guid id,
         [FromBody] CreateOrUpdateBeanPayload payload,
         CancellationToken cancellationToken)
@@ -77,6 +77,20 @@ public class BeansController(
         var bean = await _beansService.CreateOrUpdateAsync(id, payload, cancellationToken);
         var result = _beansMapper.ToBeanResponse(bean);
         return Ok(result);
+    }
+
+    [HttpPatch("{id}")]
+    [Consumes("application/json")]
+    [ProducesResponseType<BeanResponse>(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> Update(
+        Guid id,
+        [FromBody] UpdateBeanPayload payload,
+        CancellationToken cancellationToken)
+    {
+        await _beansService.UpdateAsync(id, payload, cancellationToken);
+        return NoContent();
     }
 
     [HttpDelete("{id}")]

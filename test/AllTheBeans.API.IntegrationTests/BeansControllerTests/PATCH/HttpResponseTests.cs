@@ -12,11 +12,11 @@ using NSubstitute.ClearExtensions;
 using NSubstitute.ExceptionExtensions;
 using System.Net;
 
-namespace AllTheBeans.API.IntegrationTests.BeansControllerTests.POST;
+namespace AllTheBeans.API.IntegrationTests.BeansControllerTests.PATCH;
 internal class HttpResponseTests
 {
-    private const string TestFilesLocation = "Beans\\POST";
-    private const string Endpoint = "/beans";
+    private const string TestFilesLocation = "Beans\\PATCH";
+    private const string Endpoint = "/beans/0199a055-1540-77eb-8bdf-b2ff9cc37089";
 
     private readonly IBeansService _beansService =
         Substitute.For<IBeansService>();
@@ -56,42 +56,41 @@ internal class HttpResponseTests
         using var content = new StringContent(string.Empty);
 
         using var httpClient = _factory.CreateClient();
-        using var response = await httpClient.PostAsync(Endpoint, content);
+        using var response = await httpClient.PatchAsync(Endpoint, content);
 
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.UnsupportedMediaType));
     }
 
-
     [Test]
-    [Description("Conflict status code should be returned when duplicated bean is created")]
-    public async Task DuplicatedBean_Should_ReturnCoflict()
+    [Description("Conflict status code should be returned when duplicated name is used")]
+    public async Task DuplicatedName_Should_ReturnCoflict()
     {
         _beansService
-            .CreateAsync(Arg.Any<ICreateOrUpdateBeanDTO>(), Arg.Any<CancellationToken>())
+            .UpdateAsync(Arg.Any<Guid>(), Arg.Any<IUpdateBeanDTO>(), Arg.Any<CancellationToken>())
             .ThrowsAsyncForAnyArgs(new UniqueConstraintException());
         var file = TestPayloadProvider.GetFirstValidPayloadFilePath(TestFilesLocation);
         using var content = await ContentBuilder.BuildJsonContentFromFile(file);
 
         using var httpClient = _factory.CreateClient();
-        using var response = await httpClient.PostAsync(Endpoint, content);
+        using var response = await httpClient.PatchAsync(Endpoint, content);
 
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Conflict));
     }
 
     [Test]
-    [Description("Valid bean should return HTTP status code OK with the Id of the created entity")]
-    public async Task ValidBean_Should_ReturnHttpStatusCodeOkWithIdOfTheCreatedEntity()
+    [Description("Successful update should return HTTP status code NoContent with the Id of the created entity")]
+    public async Task SuccessfulUpdate_Should_ReturnHttpStatusCodeNoContentWithIdOfTheCreatedEntity()
     {
         _beansService
-            .CreateAsync(Arg.Any<ICreateOrUpdateBeanDTO>(), Arg.Any<CancellationToken>())
-            .ReturnsForAnyArgs(Task.FromResult(new BeanDTO() as IBeanDTO));
+            .UpdateAsync(Arg.Any<Guid>(), Arg.Any<IUpdateBeanDTO>(), Arg.Any<CancellationToken>())
+            .ReturnsForAnyArgs(Task.CompletedTask);
         var file = TestPayloadProvider.GetFirstValidPayloadFilePath(TestFilesLocation);
         using var content = await ContentBuilder.BuildJsonContentFromFile(file);
 
         using var httpClient = _factory.CreateClient();
-        using var response = await httpClient.PostAsync(Endpoint, content);
+        using var response = await httpClient.PatchAsync(Endpoint, content);
 
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
     }
 
     [Test]
@@ -100,13 +99,13 @@ internal class HttpResponseTests
     {
         var exception = new Exception("Something went wrong");
         _beansService
-            .CreateAsync(Arg.Any<ICreateOrUpdateBeanDTO>(), Arg.Any<CancellationToken>())
+            .UpdateAsync(Arg.Any<Guid>(), Arg.Any<IUpdateBeanDTO>(), Arg.Any<CancellationToken>())
             .ThrowsAsyncForAnyArgs(exception);
         var file = TestPayloadProvider.GetFirstValidPayloadFilePath(TestFilesLocation);
         using var content = await ContentBuilder.BuildJsonContentFromFile(file);
 
         using var httpClient = _factory.CreateClient();
-        using var response = await httpClient.PostAsync(Endpoint, content);
+        using var response = await httpClient.PatchAsync(Endpoint, content);
 
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.InternalServerError));
 
