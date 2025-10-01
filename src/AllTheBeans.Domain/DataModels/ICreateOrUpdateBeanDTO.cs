@@ -1,7 +1,7 @@
 ﻿using AllTheBeans.Domain.Enums;
 
 namespace AllTheBeans.Domain.DataModels;
-public interface ICreateBeanDTO
+public interface ICreateOrUpdateBeanDTO
 {
     uint Index { get; }
     bool IsBOTD { get; }

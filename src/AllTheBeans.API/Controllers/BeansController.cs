@@ -40,10 +40,21 @@ public class BeansController(
 
     [HttpPost]
     public async Task<IActionResult> Create(
-        [FromBody] CreateBeanPayload payload, 
+        [FromBody] CreateOrUpdateBeanPayload payload, 
         CancellationToken cancellationToken)
     {
         var bean = await _beansService.CreateAsync(payload, cancellationToken);
+        var result = _beansMapper.ToBeanResponse(bean);
+        return Ok(result);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(
+        Guid id,
+        [FromBody] CreateOrUpdateBeanPayload payload,
+        CancellationToken cancellationToken)
+    {
+        var bean = await _beansService.CreateOrUpdateAsync(id, payload, cancellationToken);
         var result = _beansMapper.ToBeanResponse(bean);
         return Ok(result);
     }

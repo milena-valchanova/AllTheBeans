@@ -62,7 +62,7 @@ internal class ValidationTests
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         await _beansInitialisationService
             .Received(1)
-            .CreateAsync(Arg.Any<ICreateBeanDTO>(), Arg.Any<CancellationToken>());
+            .CreateAsync(Arg.Any<ICreateOrUpdateBeanDTO>(), Arg.Any<CancellationToken>());
     }
 
     [Test]
@@ -78,7 +78,7 @@ internal class ValidationTests
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         await _beansInitialisationService
             .DidNotReceiveWithAnyArgs()
-            .CreateAsync(Arg.Any<ICreateBeanDTO>(), Arg.Any<CancellationToken>());
+            .CreateAsync(Arg.Any<ICreateOrUpdateBeanDTO>(), Arg.Any<CancellationToken>());
 
         await ResponseAssertionHelper.VerifyBadRequest(response, file);
     }

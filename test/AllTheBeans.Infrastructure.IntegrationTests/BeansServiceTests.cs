@@ -1,7 +1,6 @@
 ﻿using AllTheBeans.Domain;
 using AllTheBeans.Domain.DataModels;
 using AllTheBeans.Domain.Entities;
-using AllTheBeans.Domain.Repositories.Implementations;
 using AllTheBeans.Domain.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -71,7 +70,7 @@ internal class BeansServiceTests
     [Description("Country should be stored when storing bean succeeds")]
     public async Task Country_ShouldBe_Created_When_StoringBeanSucceeds()
     {
-        var beanDto = new CreateBeanDTO()
+        var beanDto = new CreateOrUpdateBeanDTO()
         {
             CountryName = "Peru"
         };
@@ -83,6 +82,69 @@ internal class BeansServiceTests
         Assert.That(countriesInDb[0].Name, Is.EqualTo(beanDto.CountryName));
     }
 
+    [Test]
+    [Description("Bean should be created when it does not exist")]
+    public async Task Bean_ShouldBe_Created_When_ItDoesNotExist()
+    {
+        var beanId = Guid.NewGuid();
+        var beanDto = new CreateOrUpdateBeanDTO()
+        {
+            Name = "Bean 1",
+            CountryName = "Peru"
+        };
+
+        var _ = await _service.CreateOrUpdateAsync(beanId, beanDto);
+
+        var beansInDb = await _context.Beans.ToListAsync();
+        Assert.That(beansInDb, Has.Count.EqualTo(1));
+        Assert.That(beansInDb[0].Name, Is.EqualTo(beanDto.Name));
+        Assert.That(beansInDb[0].Id, Is.Not.EqualTo(beanId));
+
+        var countriesInDb = await _context.Countries.ToListAsync();
+        Assert.That(countriesInDb, Has.Count.EqualTo(1));
+        Assert.That(countriesInDb[0].Name, Is.EqualTo(beanDto.CountryName));
+    }
+
+    [Test]
+    [Description("Bean should be updated when it exists")]
+    public async Task Bean_ShouldBe_Updated_When_ItExists()
+    {
+        var seededBean = new Bean()
+        {
+            Name = "Old Name",
+            Country = new Country()
+            {
+                Name = "Old Country"
+            }
+        };
+        await _context.AddAsync(seededBean);
+        await _context.SaveChangesAsync();
+
+        var beanDto = new CreateOrUpdateBeanDTO()
+        {
+            Name = "New Name",
+            CountryName = "New Country"
+        };
+
+        var result = await _service.CreateOrUpdateAsync(seededBean.Id, beanDto);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.Name, Is.EqualTo(beanDto.Name));
+            Assert.That(result.CountryName, Is.EqualTo(beanDto.CountryName));
+        }
+
+        var beansInDb = await _context.Beans.ToListAsync();
+        Assert.That(beansInDb, Has.Count.EqualTo(1));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(beansInDb[0].Id, Is.EqualTo(seededBean.Id));
+            Assert.That(beansInDb[0].Name, Is.EqualTo(beanDto.Name));
+        }
+
+        var countriesInDb = await _context.Countries.ToListAsync();
+        Assert.That(countriesInDb, Has.Count.EqualTo(2));
+    }
 
     [Test]
     [Description("GetByIdAsync should return correct entity")]

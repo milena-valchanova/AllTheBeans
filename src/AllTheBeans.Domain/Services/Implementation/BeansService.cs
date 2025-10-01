@@ -33,7 +33,7 @@ internal class BeansService(
     public Task<int> CountAllAsync(CancellationToken cancellationToken = default)
         => _beansRepository.CountAllAsync(cancellationToken);
 
-    public async Task<IBeanDTO> CreateAsync(ICreateBeanDTO beanDTO, CancellationToken cancellationToken = default)
+    public async Task<IBeanDTO> CreateAsync(ICreateOrUpdateBeanDTO beanDTO, CancellationToken cancellationToken = default)
     {
         await using var transaction = await _context.Database
             .BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
@@ -43,11 +43,31 @@ internal class BeansService(
         return await GetByIdAsync(beanId, cancellationToken);
     }
 
+    public async Task<IBeanDTO> CreateOrUpdateAsync(Guid id, ICreateOrUpdateBeanDTO beanDTO, CancellationToken cancellationToken = default)
+    {
+        await using var transaction = await _context.Database
+            .BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
+        var bean = await _beansRepository.GetByIdOrDefaultAsync(id, cancellationToken);
+        var country = await _countriesRepository.GetOrCreateAsync(beanDTO.CountryName, cancellationToken);
+        Guid result;
+        if (bean is null)
+        {
+            result = await _beansRepository.CreateAsync(beanDTO, country.Id, cancellationToken);
+        }
+        else
+        {
+            result = bean.Id;
+            await _beansRepository.UpdateAsync(bean, beanDTO, country.Id, cancellationToken);
+        }
+        await transaction.CommitAsync(cancellationToken);
+        return await GetByIdAsync(result, cancellationToken);
+    }
+
     public async Task DeleteBeanAsync(Guid id, CancellationToken cancellationToken = default)
     {
         await using var transaction = await _context.Database
             .BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
-        var bean = await _beansRepository.GetByIdTrackedAsync(id, cancellationToken);
+        var bean = await _beansRepository.GetByIdAsync(id, cancellationToken);
         var countryId = bean.CountryId;
         await _beansRepository.DeleteAsync(bean, cancellationToken);
 

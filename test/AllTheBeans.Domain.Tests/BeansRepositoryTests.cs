@@ -136,7 +136,7 @@ internal class BeansRepositoryTests
         await _context.AddAsync(seededBean);
         await _context.SaveChangesAsync();
 
-        var result = await BeansRepository.GetByIdTrackedAsync(seededBean.Id);
+        var result = await BeansRepository.GetByIdAsync(seededBean.Id);
 
         Assert.That(result, Is.EqualTo(seededBean));
     }
@@ -148,7 +148,7 @@ internal class BeansRepositoryTests
         var notExistingId = Guid.NewGuid();
 
         var exception = Assert.ThrowsAsync<KeyNotFoundException>(
-            () => BeansRepository.GetByIdTrackedAsync(notExistingId));
+            () => BeansRepository.GetByIdAsync(notExistingId));
 
         var expectedError = $"Bean with id {notExistingId} was not found";
         Assert.That(exception.Message, Is.EqualTo(expectedError));
@@ -178,7 +178,7 @@ internal class BeansRepositoryTests
     [Description("Bean entity should be successfully populated with provided properties")]
     public async Task BeanEntity_ShouldBe_SuccessfullyPopulatedWithProvidedProperties()
     {
-        var beanDto = new CreateBeanDTO()
+        var beanDto = new CreateOrUpdateBeanDTO()
         {
             Name = "TURNABOUT",
             Description = "Ipsum cupidatat nisi do elit veniam Lorem magna. Ullamco qui exercitation fugiat pariatur sunt dolore Lorem magna magna pariatur minim. Officia amet incididunt ad proident. Dolore est irure ex fugiat. Voluptate sunt qui ut irure commodo excepteur enim labore incididunt quis duis. Velit anim amet tempor ut labore sint deserunt.",

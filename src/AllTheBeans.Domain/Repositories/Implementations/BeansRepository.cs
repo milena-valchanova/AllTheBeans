@@ -24,10 +24,13 @@ internal class BeansRepository(BeansContext _context) : IBeansRepository
     public Task<int> CountAllAsync(CancellationToken cancellationToken = default)
         => _context.Beans.CountAsync(cancellationToken);
 
-    public async Task<Bean> GetByIdTrackedAsync(Guid id, CancellationToken cancellationToken = default)
-        => await _context.Beans
-            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken)
+    public async Task<Bean> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+        => await GetByIdOrDefaultAsync(id, cancellationToken)
             ?? throw new KeyNotFoundException($"Bean with id {id} was not found");
+
+    public Task<Bean?> GetByIdOrDefaultAsync(Guid id, CancellationToken cancellationToken = default)
+    => _context.Beans
+        .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
 
     public async Task DeleteAsync(Bean bean, CancellationToken cancellationToken = default)
     {
@@ -35,7 +38,7 @@ internal class BeansRepository(BeansContext _context) : IBeansRepository
         await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<Guid> CreateAsync(ICreateBeanDTO beanDTO, long countryId, CancellationToken cancellationToken = default)
+    public async Task<Guid> CreateAsync(ICreateOrUpdateBeanDTO beanDTO, long countryId, CancellationToken cancellationToken = default)
     {
         var bean = new Bean()
         {
@@ -52,6 +55,20 @@ internal class BeansRepository(BeansContext _context) : IBeansRepository
         _context.Beans.Add(bean);
         await _context.SaveChangesAsync(cancellationToken);
         return bean.Id;
+    }
+
+    public async Task UpdateAsync(Bean bean, ICreateOrUpdateBeanDTO beanDTO, long countryId, CancellationToken cancellationToken = default)
+    {
+        bean.Colour = beanDTO.Colour;
+        bean.Name = beanDTO.Name;
+        bean.Description = beanDTO.Description;
+        bean.Cost = beanDTO.Cost;
+        bean.Index = beanDTO.Index;
+        bean.ImageName = beanDTO.ImageName;
+        bean.IsBOTD = beanDTO.IsBOTD;
+        bean.CountryId = countryId;
+
+        await _context.SaveChangesAsync(cancellationToken);
     }
 }
 

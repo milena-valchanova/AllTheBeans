@@ -8,10 +8,13 @@ internal interface IBeansRepository
 
     Task<int> CountAllAsync(CancellationToken cancellationToken = default);
 
-    Task<Bean> GetByIdTrackedAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<Bean> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+
+    Task<Bean?> GetByIdOrDefaultAsync(Guid id, CancellationToken cancellationToken = default);
 
     Task DeleteAsync(Bean bean, CancellationToken cancellationToken = default);
 
-    Task<Guid> CreateAsync(ICreateBeanDTO beanDTO, long countryId, CancellationToken cancellationToken = default);
-
+    Task<Guid> CreateAsync(ICreateOrUpdateBeanDTO beanDTO, long countryId, CancellationToken cancellationToken = default);
+    
+    Task UpdateAsync(Bean bean, ICreateOrUpdateBeanDTO beanDTO, long countryId, CancellationToken cancellationToken = default);
 }

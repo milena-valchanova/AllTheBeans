@@ -77,10 +77,10 @@ internal class BeansServiceExceptionsTests
     {
         var thrownException = new Exception("Something went wrong");
         _beansRepository
-            .CreateAsync(Arg.Any<CreateBeanDTO>(), Arg.Any<long>(), Arg.Any<CancellationToken>())
+            .CreateAsync(Arg.Any<CreateOrUpdateBeanDTO>(), Arg.Any<long>(), Arg.Any<CancellationToken>())
             .ThrowsAsyncForAnyArgs(thrownException);
 
-        var beanDto = new CreateBeanDTO()
+        var beanDto = new CreateOrUpdateBeanDTO()
         {
             CountryName = "Peru"
         };
