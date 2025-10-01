@@ -1,0 +1,190 @@
+{
+	"info": {
+		"_postman_id": "a36abad3-bcc8-41b2-957a-566e469612e7",
+		"name": "AllTheBeans",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "48945028",
+		"_collection_link": "https://milena-valchanova-125887.postman.co/workspace/Milena-Valchanova's-Workspace~70ccee1c-efa7-443b-8bd3-a156b135d8e2/collection/48945028-a36abad3-bcc8-41b2-957a-566e469612e7?action=share&source=collection_link&creator=48945028"
+	},
+	"item": [
+		{
+			"name": "Search",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseUrl}}/beans?pageNumber=1&pageSize=10&search=ed1",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"beans"
+					],
+					"query": [
+						{
+							"key": "pageNumber",
+							"value": "1"
+						},
+						{
+							"key": "pageSize",
+							"value": "10"
+						},
+						{
+							"key": "search",
+							"value": "ed1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseUrl}}/beans",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"beans"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET by ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseUrl}}/beans/{{ValidBeanId}}",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"beans",
+						"{{ValidBeanId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Bean Of The Day",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseUrl}}/beans/of-the-day",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"beans",
+						"of-the-day"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"index\": 0,\r\n  \"isBOTD\": false,\r\n  \"cost\": \"39.26\",\r\n  \"image\": \"photo-1672306319681-7b6d7ef349cf\",\r\n  \"colour\": \"DarkRoast\",\r\n  \"name\": \"TURNABOUT\",\r\n  \"description\": \"Ipsum cupidatat nisi do elit veniam Lorem magna. Ullamco qui exercitation fugiat pariatur sunt dolore Lorem magna magna pariatur minim. Officia amet incididunt ad proident. Dolore est irure ex fugiat. Voluptate sunt qui ut irure commodo excepteur enim labore incididunt quis duis. Velit anim amet tempor ut labore sint deserunt.\\r\\n\",\r\n  \"country\": \"Peru\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/beans",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"beans"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"index\": 0,\r\n  \"isBOTD\": false,\r\n  \"cost\": \"150\",\r\n  \"image\": \"photo-1672306319681-7b6d7ef349cf\",\r\n  \"colour\": \"DarkRoast\",\r\n  \"name\": \"TURNABOUT\",\r\n  \"description\": \"Ipsum cupidatat nisi do elit veniam Lorem magna. Ullamco qui exercitation fugiat pariatur sunt dolore Lorem magna magna pariatur minim. Officia amet incididunt ad proident. Dolore est irure ex fugiat. Voluptate sunt qui ut irure commodo excepteur enim labore incididunt quis duis. Velit anim amet tempor ut labore sint deserunt.\\r\\n\",\r\n  \"country\": \"Peru\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/beans/{{ValidBeanId}}",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"beans",
+						"{{ValidBeanId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{BaseUrl}}/beans/{{ValidBeanId}}",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"beans",
+						"{{ValidBeanId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
