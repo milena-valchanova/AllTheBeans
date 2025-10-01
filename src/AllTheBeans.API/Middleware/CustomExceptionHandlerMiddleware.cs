@@ -26,6 +26,7 @@ public class CustomExceptionHandlerMiddleware(RequestDelegate next)
         var code = ex switch
         {
             UniqueConstraintException => HttpStatusCode.Conflict,
+            KeyNotFoundException => HttpStatusCode.NotFound,
             _ => HttpStatusCode.InternalServerError
         };
         return (code, ex.Message);

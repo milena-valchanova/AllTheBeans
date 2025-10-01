@@ -123,6 +123,47 @@ internal class BeansRepositoryTests
     }
 
     [Test]
+    [Description("GetByIdAsync should return correct entity")]
+    public async Task GetByIdAsync_Should_ReturnCorrectEntity()
+    {
+        var seededBean = new Bean()
+        {
+            Country = new Country()
+            {
+                Name = "Peru"
+            }
+        };
+        await _context.AddAsync(seededBean);
+        await _context.SaveChangesAsync();
+
+        var result = await BeansRepository.GetByIdAsync(seededBean.Id);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.Id, Is.EqualTo(seededBean.Id));
+            Assert.That(result.Name, Is.EqualTo(seededBean.Name));
+            Assert.That(result.Description, Is.EqualTo(seededBean.Description));
+            Assert.That(result.CountryName, Is.EqualTo(seededBean.Country.Name));
+            Assert.That(result.Index, Is.EqualTo(seededBean.Index));
+            Assert.That(result.ImageName, Is.EqualTo(seededBean.ImageName));
+            Assert.That(result.Colour, Is.EqualTo(seededBean.Colour));
+            Assert.That(result.Cost, Is.EqualTo(seededBean.Cost));
+        }
+    }
+
+    [Test]
+    [Description("GetByIdAsync should throw KeyNotFoundException when bean is not found")]
+    public void GetByIdAsync_Should_ThrowKeyNotFoundException_When_BeanIsNotFound()
+    {
+        var notExistingId = Guid.NewGuid();
+
+        var exception = Assert.ThrowsAsync<KeyNotFoundException>(
+            () => BeansRepository.GetByIdAsync(notExistingId));
+
+        var expectedError = $"Bean with id {notExistingId} was not found";
+        Assert.That(exception.Message, Is.EqualTo(expectedError));
+    }
+
+    [Test]
     [Description("Bean entity should be successfully populated with provided properties")]
     public async Task BeanEntity_ShouldBe_SuccessfullyPopulatedWithProvidedProperties()
     {

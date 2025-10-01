@@ -1,10 +1,24 @@
 ﻿using AllTheBeans.Domain.DataModels;
 using AllTheBeans.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace AllTheBeans.Domain.Repositories.Implementations;
 internal class BeansRepository(BeansContext _context) : IBeansRepository
 {
+    private readonly Expression<Func<Bean, IBeanDTO>> _beanSelector = p => new BeanDTO()
+    {
+        Id = p.Id,
+        Index = p.Index,
+        IsBOTD = p.IsBOTD,
+        Cost = p.Cost,
+        ImageName = p.ImageName,
+        Colour = p.Colour,
+        Name = p.Name,
+        Description = p.Description,
+        CountryName = p.Country.Name
+    } as IBeanDTO;
+
     public Task<List<IBeanDTO>> GetAllAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default)
     {
         if (pageNumber <= 0)
@@ -16,18 +30,7 @@ internal class BeansRepository(BeansContext _context) : IBeansRepository
         return _context.Beans
             .Include(p => p.Country)
             .AsNoTracking()
-            .Select(p => new BeanDTO()
-            {
-                Id = p.Id,
-                Index = p.Index,
-                IsBOTD = p.IsBOTD,
-                Cost = p.Cost,
-                ImageName = p.ImageName,
-                Colour = p.Colour,
-                Name = p.Name,
-                Description = p.Description,
-                CountryName = p.Country.Name
-            } as IBeanDTO)
+            .Select(_beanSelector)
             .OrderBy(p => p.Id)
             .Skip(entitiesToSkip)
             .Take(pageSize)
@@ -36,6 +39,15 @@ internal class BeansRepository(BeansContext _context) : IBeansRepository
 
     public Task<int> CountAllAsync(CancellationToken cancellationToken = default)
         => _context.Beans.CountAsync(cancellationToken);
+
+    public async Task<IBeanDTO> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+        => await _context.Beans
+            .Include(p => p.Country)
+            .AsNoTracking()
+            .Where(p => p.Id == id)
+            .Select(_beanSelector)
+            .FirstOrDefaultAsync(cancellationToken)
+        ?? throw new KeyNotFoundException($"Bean with id {id} was not found");
 
     public async Task<Guid> CreateAsync(ICreateBeanDTO beanDTO, long countryId, CancellationToken cancellationToken = default)
     {

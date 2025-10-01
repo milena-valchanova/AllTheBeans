@@ -7,6 +7,8 @@ public interface IBeansRepository
 
     Task<int> CountAllAsync(CancellationToken cancellationToken = default);
 
+    Task<IBeanDTO> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+
     Task<Guid> CreateAsync(ICreateBeanDTO beanDTO, long countryId, CancellationToken cancellationToken = default);
 
 }
