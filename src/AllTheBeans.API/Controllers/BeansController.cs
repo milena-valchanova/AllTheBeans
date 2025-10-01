@@ -1,16 +1,13 @@
 ﻿using AllTheBeans.API.DataModels;
 using AllTheBeans.API.Mappers;
-using AllTheBeans.Domain.Repositories;
 using AllTheBeans.Domain.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Runtime.InteropServices;
 
 namespace AllTheBeans.API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
 public class BeansController(
-    IBeansRepository _beansRepository,
     IBeansMapper _beansMapper,
     IBeansService _beansService) : ControllerBase
 {
@@ -19,11 +16,11 @@ public class BeansController(
         [FromQuery] PaginationParameters paginationParameters,
         CancellationToken cancellationToken)
     {
-        var beans = await _beansRepository.GetAllAsync(
+        var beans = await _beansService.GetAllAsync(
             paginationParameters.PageNumber,
             paginationParameters.PageSize,
             cancellationToken);
-        var totalBeans = await _beansRepository.CountAllAsync(cancellationToken);
+        var totalBeans = await _beansService.CountAllAsync(cancellationToken);
 
         var result = new BeansResponse()
         {
@@ -36,7 +33,7 @@ public class BeansController(
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
     {
-        var bean = await _beansRepository.GetByIdAsync(id, cancellationToken);
+        var bean = await _beansService.GetByIdAsync(id, cancellationToken);
         var result = _beansMapper.ToBeanResponse(bean);
         return Ok(result);
     }

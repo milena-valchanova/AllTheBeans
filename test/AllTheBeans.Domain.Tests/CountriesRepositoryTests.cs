@@ -29,7 +29,7 @@ internal class CountriesRepositoryTests
     public async Task Country_ShouldBe_CreatedSuccessfully_When_DoesNotExist()
     {
         var countryName = "Peru";
-        var country = await CountriesRepository.GetOrCreate(countryName);
+        var country = await CountriesRepository.GetOrCreateAsync(countryName);
 
         Assert.That(country, Is.Not.Null);
         Assert.That(country.Id, Is.EqualTo(1));
@@ -53,7 +53,7 @@ internal class CountriesRepositoryTests
         await _context.Countries.AddAsync(seededCountry);
         await _context.SaveChangesAsync();
 
-        var country = await CountriesRepository.GetOrCreate(seededCountry.Name);
+        var country = await CountriesRepository.GetOrCreateAsync(seededCountry.Name);
 
         Assert.That(country, Is.Not.Null);
         Assert.That(country.Id, Is.EqualTo(seededCountry.Id));

@@ -1,27 +1,11 @@
 ﻿using AllTheBeans.Domain.DataModels;
 using AllTheBeans.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using System.Linq.Expressions;
-using System.Threading;
 
 namespace AllTheBeans.Domain.Repositories.Implementations;
 internal class BeansRepository(BeansContext _context) : IBeansRepository
 {
-    private readonly Expression<Func<Bean, IBeanDTO>> _beanSelector = p => new BeanDTO()
-    {
-        Id = p.Id,
-        Index = p.Index,
-        IsBOTD = p.IsBOTD,
-        Cost = p.Cost,
-        ImageName = p.ImageName,
-        Colour = p.Colour,
-        Name = p.Name,
-        Description = p.Description,
-        CountryName = p.Country.Name
-    } as IBeanDTO;
-
-    public Task<List<IBeanDTO>> GetAllAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default)
+    public IQueryable<Bean> GetAll(int pageNumber, int pageSize, CancellationToken cancellationToken = default)
     {
         if (pageNumber <= 0)
             throw new ArgumentException($"{nameof(pageNumber)} must have positive value");
@@ -29,28 +13,16 @@ internal class BeansRepository(BeansContext _context) : IBeansRepository
             throw new ArgumentException($"{nameof(pageSize)} must have positive value");
 
         var entitiesToSkip = (pageNumber - 1) * pageSize;
-        return GetBeansWithCountries()
-            .Select(_beanSelector)
+        return _context.Beans
+            .Include(p => p.Country)
+            .AsNoTracking()
             .OrderBy(p => p.Id)
             .Skip(entitiesToSkip)
-            .Take(pageSize)
-            .ToListAsync(cancellationToken);
+            .Take(pageSize);
     }
-
-    private IQueryable<Bean> GetBeansWithCountries()
-        => _context.Beans
-            .Include(p => p.Country)
-            .AsNoTracking();
 
     public Task<int> CountAllAsync(CancellationToken cancellationToken = default)
         => _context.Beans.CountAsync(cancellationToken);
-
-    public async Task<IBeanDTO> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
-        => await GetBeansWithCountries()
-            .Where(p => p.Id == id)
-            .Select(_beanSelector)
-            .FirstOrDefaultAsync(cancellationToken)
-        ?? throw new KeyNotFoundException($"Bean with id {id} was not found");
 
     public async Task<Bean> GetByIdTrackedAsync(Guid id, CancellationToken cancellationToken = default)
         => await _context.Beans

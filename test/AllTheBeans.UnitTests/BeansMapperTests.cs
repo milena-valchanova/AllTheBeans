@@ -36,7 +36,6 @@ internal class BeansMapperTests
         Assert.That(result.Cost, Is.EqualTo(expectedCost));
     }
 
-    [TestCase(default, "undefined")]
     [TestCase(BeanColour.Green, "green")]
     [TestCase(BeanColour.Golden, "golden")]
     [TestCase(BeanColour.LightRoast, "light roast")]

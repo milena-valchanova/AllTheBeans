@@ -1,9 +1,9 @@
 ﻿using AllTheBeans.Domain.Entities;
 
 namespace AllTheBeans.Domain.Repositories;
-public interface ICountriesRepository
+internal interface ICountriesRepository
 {
-    Task<Country> GetOrCreate(string name, CancellationToken cancellationToken = default);
+    Task<Country> GetOrCreateAsync(string name, CancellationToken cancellationToken = default);
 
     Task<Country> GetByIdAsync(long id, CancellationToken cancellationToken = default);
 

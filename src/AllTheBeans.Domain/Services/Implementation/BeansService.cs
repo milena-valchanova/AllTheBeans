@@ -1,7 +1,9 @@
 ﻿using AllTheBeans.Domain.DataModels;
+using AllTheBeans.Domain.Entities;
 using AllTheBeans.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.Linq.Expressions;
 
 namespace AllTheBeans.Domain.Services.Implementation;
 
@@ -10,11 +12,32 @@ internal class BeansService(
     IBeansRepository _beansRepository, 
     ICountriesRepository _countriesRepository) : IBeansService
 {
+    private readonly Expression<Func<Bean, IBeanDTO>> _beanSelector = p => new BeanDTO()
+    {
+        Id = p.Id,
+        Index = p.Index,
+        IsBOTD = p.IsBOTD,
+        Cost = p.Cost,
+        ImageName = p.ImageName,
+        Colour = p.Colour,
+        Name = p.Name,
+        Description = p.Description,
+        CountryName = p.Country.Name
+    } as IBeanDTO;
+
+    public Task<List<IBeanDTO>> GetAllAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default)
+        => _beansRepository.GetAll(pageNumber, pageSize, cancellationToken)
+        .Select(_beanSelector)
+        .ToListAsync(cancellationToken);
+
+    public Task<int> CountAllAsync(CancellationToken cancellationToken = default)
+        => _beansRepository.CountAllAsync(cancellationToken);
+
     public async Task<Guid> InitiliseAsync(ICreateBeanDTO beanDTO, CancellationToken cancellationToken = default)
     {
         await using var transaction = await _context.Database
             .BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
-        var country = await _countriesRepository.GetOrCreate(beanDTO.CountryName, cancellationToken);
+        var country = await _countriesRepository.GetOrCreateAsync(beanDTO.CountryName, cancellationToken);
         var beanId = await _beansRepository.CreateAsync(beanDTO, country.Id, cancellationToken);
         await transaction.CommitAsync(cancellationToken);
         return beanId;
@@ -34,5 +57,13 @@ internal class BeansService(
             await _countriesRepository.DeleteAsync(country, cancellationToken);
         }
         await transaction.CommitAsync(cancellationToken);
+    }
+
+    public async Task<IBeanDTO> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var result = await GetAllAsync(1, 1, cancellationToken);
+        return result
+            .FirstOrDefault()
+            ?? throw new KeyNotFoundException($"Bean with id {id} was not found");
     }
 }

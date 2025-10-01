@@ -4,6 +4,12 @@ namespace AllTheBeans.Domain.Services;
 
 public interface IBeansService
 {
+    Task<List<IBeanDTO>> GetAllAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default);
+    
+    Task<int> CountAllAsync(CancellationToken cancellationToken = default);
+
+    Task<IBeanDTO> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+
     Task<Guid> InitiliseAsync(ICreateBeanDTO beanDTO, CancellationToken cancellationToken = default);
 
     Task DeleteBeanAsync(Guid id, CancellationToken cancellationToken = default);

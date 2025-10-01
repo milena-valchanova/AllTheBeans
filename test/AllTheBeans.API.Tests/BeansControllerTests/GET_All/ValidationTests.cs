@@ -2,6 +2,7 @@
 using AllTheBeans.API.Mappers;
 using AllTheBeans.Domain.DataModels;
 using AllTheBeans.Domain.Repositories;
+using AllTheBeans.Domain.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -16,10 +17,8 @@ namespace AllTheBeans.API.IntegrationTests.BeansControllerTests.GET_All;
 [TestFixture(TestOf = typeof(BeansController))]
 internal class ValidationTests
 {
-    private readonly IBeansRepository _beansRepository = 
-        Substitute.For<IBeansRepository>();
-    private readonly IBeansMapper _beansMapper =
-        Substitute.For<IBeansMapper>();
+    private readonly IBeansService _beansService =
+        Substitute.For<IBeansService>();
     private WebApplicationFactory<Program> _factory;
 
     [OneTimeSetUp]
@@ -31,8 +30,7 @@ internal class ValidationTests
                 builder.UseEnvironment("Test");
                 builder.ConfigureTestServices(services =>
                 {
-                    services.Replace(ServiceDescriptor.Scoped(_ => _beansRepository));
-                    services.Replace(ServiceDescriptor.Singleton(_ => _beansMapper));
+                    services.Replace(ServiceDescriptor.Scoped(_ => _beansService));
                 });
             });
     }
@@ -40,8 +38,7 @@ internal class ValidationTests
     [TearDown]
     public void TearDown()
     {
-        _beansRepository.ClearSubstitute();
-        _beansMapper.ClearSubstitute();
+        _beansService.ClearSubstitute();
     }
 
     [OneTimeTearDown]
@@ -57,7 +54,7 @@ internal class ValidationTests
     [Description("Valid query parameters are accepted")]
     public async Task ValidQueryParameters_Should_BeAccepted(string endpoint, int expectedPageNumber, int expectedPageSize)
     {
-        _beansRepository
+        _beansService
             .GetAllAsync(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
             .ReturnsForAnyArgs(Task.FromResult(new List<IBeanDTO>()));
 
@@ -66,7 +63,7 @@ internal class ValidationTests
         using var response = await httpClient.GetAsync(endpoint);
 
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        await _beansRepository
+        await _beansService
             .Received(1)
             .GetAllAsync(expectedPageNumber, expectedPageSize, Arg.Any<CancellationToken>());
     }
@@ -78,7 +75,7 @@ internal class ValidationTests
     [Description("Default query parameters are applied when they are not provided")]
     public async Task DefaultQueryParameters_Should_BeApplied_When_NotProvided(string endpoint, int expectedPageNumber, int expectedPageSize)
     {
-        _beansRepository
+        _beansService
             .GetAllAsync(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
             .ReturnsForAnyArgs(Task.FromResult(new List<IBeanDTO>()));
 
@@ -87,7 +84,7 @@ internal class ValidationTests
         using var response = await httpClient.GetAsync(endpoint);
 
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        await _beansRepository
+        await _beansService
             .Received(1)
             .GetAllAsync(expectedPageNumber, expectedPageSize, Arg.Any<CancellationToken>());
     }

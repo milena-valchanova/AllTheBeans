@@ -1,7 +1,7 @@
 ﻿using AllTheBeans.API.Controllers;
 using AllTheBeans.API.Mappers;
 using AllTheBeans.Domain.DataModels;
-using AllTheBeans.Domain.Repositories;
+using AllTheBeans.Domain.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -16,8 +16,8 @@ namespace AllTheBeans.API.IntegrationTests.BeansControllerTests.GET_ById;
 [TestFixture(TestOf = typeof(BeansController))]
 internal class ValidationTests
 {
-    private readonly IBeansRepository _beansRepository = 
-        Substitute.For<IBeansRepository>();
+    private readonly IBeansService _beansService = 
+        Substitute.For<IBeansService>();
     private readonly IBeansMapper _beansMapper =
         Substitute.For<IBeansMapper>();
     private WebApplicationFactory<Program> _factory;
@@ -31,7 +31,7 @@ internal class ValidationTests
                 builder.UseEnvironment("Test");
                 builder.ConfigureTestServices(services =>
                 {
-                    services.Replace(ServiceDescriptor.Scoped(_ => _beansRepository));
+                    services.Replace(ServiceDescriptor.Scoped(_ => _beansService));
                     services.Replace(ServiceDescriptor.Singleton(_ => _beansMapper));
                 });
             });
@@ -40,7 +40,7 @@ internal class ValidationTests
     [TearDown]
     public void TearDown()
     {
-        _beansRepository.ClearSubstitute();
+        _beansService.ClearSubstitute();
         _beansMapper.ClearSubstitute();
     }
 
@@ -53,7 +53,7 @@ internal class ValidationTests
     [Test]
     public async Task ValidId_Should_BeAccepted()
     {
-        _beansRepository
+        _beansService
             .GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .ReturnsForAnyArgs(Task.FromResult(Substitute.For<IBeanDTO>()));
 
@@ -63,7 +63,7 @@ internal class ValidationTests
         using var response = await httpClient.GetAsync(endpoint);
 
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
-        await _beansRepository
+        await _beansService
             .Received(1)
             .GetByIdAsync(id, Arg.Any<CancellationToken>());
     }

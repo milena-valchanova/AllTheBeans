@@ -3,6 +3,7 @@ using AllTheBeans.API.DataModels;
 using AllTheBeans.API.Mappers;
 using AllTheBeans.Domain.DataModels;
 using AllTheBeans.Domain.Repositories;
+using AllTheBeans.Domain.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -13,7 +14,6 @@ using NSubstitute;
 using NSubstitute.ClearExtensions;
 using NSubstitute.ExceptionExtensions;
 using System.Net;
-using System.Net.Http.Json;
 
 namespace AllTheBeans.API.IntegrationTests.BeansControllerTests.GET_ById;
 
@@ -22,10 +22,8 @@ internal class HttpResponseTests
 {
     private const string Endpoint = "/beans/680d88e9-d495-46a0-b0ca-133c12d939f5";
 
-    private readonly IBeansRepository _beansRepository =
-        Substitute.For<IBeansRepository>();
-    private readonly IBeansMapper _beansMapper =
-        Substitute.For<IBeansMapper>();
+    private readonly IBeansService _beansService =
+        Substitute.For<IBeansService>();
     private WebApplicationFactory<Program> _factory;
 
     [OneTimeSetUp]
@@ -37,8 +35,7 @@ internal class HttpResponseTests
                 builder.UseEnvironment("Test");
                 builder.ConfigureTestServices(services =>
                 {
-                    services.Replace(ServiceDescriptor.Scoped(_ => _beansRepository));
-                    services.Replace(ServiceDescriptor.Singleton(_ => _beansMapper));
+                    services.Replace(ServiceDescriptor.Scoped(_ => _beansService));
                 });
             });
     }
@@ -46,8 +43,7 @@ internal class HttpResponseTests
     [TearDown]
     public void TearDown()
     {
-        _beansRepository.ClearSubstitute();
-        _beansMapper.ClearSubstitute();
+        _beansService.ClearSubstitute();
     }
 
     [OneTimeTearDown]
@@ -61,7 +57,7 @@ internal class HttpResponseTests
     public async Task NotFoundStatusCode_ShouldBe_Returned_When_ABeanIsNotExistingInTheDatabase()
     {
         var exception = new KeyNotFoundException("Not found");
-        _beansRepository
+        _beansService
             .GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .ThrowsAsyncForAnyArgs(exception);
 
@@ -79,7 +75,7 @@ internal class HttpResponseTests
     public async Task InternalServerError_ShouldBe_Returned_When_AnExceptionOccurs()
     {
         var exception = new Exception("Something went wrong");
-        _beansRepository
+        _beansService
             .GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .ThrowsAsyncForAnyArgs(exception);
 

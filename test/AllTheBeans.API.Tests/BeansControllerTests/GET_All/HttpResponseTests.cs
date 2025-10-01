@@ -1,8 +1,7 @@
 ﻿using AllTheBeans.API.Controllers;
 using AllTheBeans.API.DataModels;
-using AllTheBeans.API.Mappers;
 using AllTheBeans.Domain.DataModels;
-using AllTheBeans.Domain.Repositories;
+using AllTheBeans.Domain.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -22,10 +21,8 @@ internal class HttpResponseTests
 {
     private const string Endpoint = "/beans";
 
-    private readonly IBeansRepository _beansRepository =
-        Substitute.For<IBeansRepository>();
-    private readonly IBeansMapper _beansMapper =
-        Substitute.For<IBeansMapper>();
+    private readonly IBeansService _beansService =
+        Substitute.For<IBeansService>();
     private WebApplicationFactory<Program> _factory;
 
     [OneTimeSetUp]
@@ -37,8 +34,7 @@ internal class HttpResponseTests
                 builder.UseEnvironment("Test");
                 builder.ConfigureTestServices(services =>
                 {
-                    services.Replace(ServiceDescriptor.Scoped(_ => _beansRepository));
-                    services.Replace(ServiceDescriptor.Singleton(_ => _beansMapper));
+                    services.Replace(ServiceDescriptor.Scoped(_ => _beansService));
                 });
             });
     }
@@ -46,8 +42,7 @@ internal class HttpResponseTests
     [TearDown]
     public void TearDown()
     {
-        _beansRepository.ClearSubstitute();
-        _beansMapper.ClearSubstitute();
+        _beansService.ClearSubstitute();
     }
 
     [OneTimeTearDown]
@@ -60,11 +55,11 @@ internal class HttpResponseTests
     [Description("GetAll should return HTTP status code OK with correct response")]
     public async Task GetAll_Should_ReturnHttpStatusCodeOkWithCorrectResponse()
     {
-        _beansRepository
+        _beansService
             .GetAllAsync(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
             .ReturnsForAnyArgs(Task.FromResult(new List<IBeanDTO>()));
         var totalNumberOfBeans = 5;
-        _beansRepository
+        _beansService
             .CountAllAsync(Arg.Any<CancellationToken>())
             .ReturnsForAnyArgs(totalNumberOfBeans);
 
@@ -83,7 +78,7 @@ internal class HttpResponseTests
     public async Task InternalServerError_ShouldBe_Returned_When_AnExceptionOccurs()
     {
         var exception = new Exception("Something went wrong");
-        _beansRepository
+        _beansService
             .GetAllAsync(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
             .ThrowsAsyncForAnyArgs(exception);
 

@@ -5,7 +5,7 @@ using System.Xml.Linq;
 namespace AllTheBeans.Domain.Repositories.Implementations;
 internal class CountriesRepository(BeansContext _context) : ICountriesRepository
 {
-    public async Task<Country> GetOrCreate(string name, CancellationToken cancellationToken = default)
+    public async Task<Country> GetOrCreateAsync(string name, CancellationToken cancellationToken = default)
     {
         var country = await _context.Countries
             .FirstOrDefaultAsync(p => p.Name == name, cancellationToken);

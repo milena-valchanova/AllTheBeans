@@ -36,11 +36,11 @@ internal class BeansRepositoryTests
 
     [TestCase(0)]
     [TestCase(-1)]
-    [Description("GetAllAsync should throw ArgumentException when page number is negative")]
-    public void GetAllAsync_Should_ThrowArgumentException_WhenPageNumberIsNegative(int invalidPageNumber)
+    [Description("GetAll should throw ArgumentException when page number is negative")]
+    public void GetAll_Should_ThrowArgumentException_WhenPageNumberIsNegative(int invalidPageNumber)
     {
-        var ex = Assert.ThrowsAsync<ArgumentException>(
-            () => BeansRepository.GetAllAsync(invalidPageNumber, defaultPageSize));
+        var ex = Assert.Throws<ArgumentException>(
+            () => BeansRepository.GetAll(invalidPageNumber, defaultPageSize));
 
         var expectedErrorMessage = "pageNumber must have positive value";
         Assert.That(ex.Message, Is.EqualTo(expectedErrorMessage));
@@ -48,33 +48,33 @@ internal class BeansRepositoryTests
 
     [TestCase(0)]
     [TestCase(-1)]
-    [Description("GetAllAsync should throw ArgumentException when page size is not positive")]
-    public void GetAllAsync_Should_ThrowArgumentException_WhenPageSizeIsNotPositive(int invalidPageSize)
+    [Description("GetAll should throw ArgumentException when page size is not positive")]
+    public void GetAll_Should_ThrowArgumentException_WhenPageSizeIsNotPositive(int invalidPageSize)
     {
-        var ex = Assert.ThrowsAsync<ArgumentException>(
-            () => BeansRepository.GetAllAsync(defaultPageNumber, invalidPageSize));
+        var ex = Assert.Throws<ArgumentException>(
+            () => BeansRepository.GetAll(defaultPageNumber, invalidPageSize));
 
         var expectedErrorMessage = "pageSize must have positive value";
         Assert.That(ex.Message, Is.EqualTo(expectedErrorMessage));
     }
 
     [Test]
-    [Description("GetAllAsync should return an empty collection when there is no records in the database")]
-    public async Task GetAllAsync_Should_ReturnEmptyCollection_When_ThereAreNoEntitiesInTheDatatbase()
+    [Description("GetAll should return an empty collection when there is no records in the database")]
+    public void GetAll_Should_ReturnEmptyCollection_When_ThereAreNoEntitiesInTheDatatbase()
     {
-        var result = await BeansRepository.GetAllAsync(defaultPageNumber, defaultPageSize);
+        var result = BeansRepository.GetAll(defaultPageNumber, defaultPageSize);
 
         Assert.That(result, Is.Empty);
     }
 
     [Test]
-    [Description("GetAllAsync should return all entities when more than exisitng number of entities is requested")]
-    public async Task GetAllAsync_Should_ReturnAllEntitites_When_MoreThanExistingNumberOfEntitiesIsRequested()
+    [Description("GetAll should return all entities when more than exisitng number of entities is requested")]
+    public async Task GetAll_Should_ReturnAllEntitites_When_MoreThanExistingNumberOfEntitiesIsRequested()
     {
         _context.Beans.Add(dummyBean);
         await _context.SaveChangesAsync();
 
-        var result = await BeansRepository.GetAllAsync(defaultPageNumber, defaultPageSize);
+        var result = BeansRepository.GetAll(defaultPageNumber, defaultPageSize).ToList();
 
         Assert.That(result, Has.Count.EqualTo(1));
     }
@@ -82,8 +82,8 @@ internal class BeansRepositoryTests
     [TestCase(1, 2, 2)]
     [TestCase(3, 2, 1)]
     [TestCase(4, 2, 0)]
-    [Description("GetAllAsync should paginate entities correctly")]
-    public async Task GetAllAsync_Should_PaginateEntitiesCorrectly(int pageNumber, int pageSize, int expectedNumberOfBeans)
+    [Description("GetAll should paginate entities correctly")]
+    public async Task GetAll_Should_PaginateEntitiesCorrectly(int pageNumber, int pageSize, int expectedNumberOfBeans)
     {
         var totalNumberOfBeans = 5;
         var seededBeans = new List<Bean>();
@@ -98,7 +98,7 @@ internal class BeansRepositoryTests
         await _context.AddRangeAsync(seededBeans);
         await _context.SaveChangesAsync();
 
-        var result = await BeansRepository.GetAllAsync(pageNumber, pageSize);
+        var result = BeansRepository.GetAll(pageNumber, pageSize).ToList();
         Assert.That(result, Has.Count.EqualTo(expectedNumberOfBeans));
     }
 
@@ -120,47 +120,6 @@ internal class BeansRepositoryTests
         var result = await BeansRepository.CountAllAsync();
 
         Assert.That(result, Is.EqualTo(numberOfSeededEntities));
-    }
-
-    [Test]
-    [Description("GetByIdAsync should return correct entity")]
-    public async Task GetByIdAsync_Should_ReturnCorrectEntity()
-    {
-        var seededBean = new Bean()
-        {
-            Country = new Country()
-            {
-                Name = "Peru"
-            }
-        };
-        await _context.AddAsync(seededBean);
-        await _context.SaveChangesAsync();
-
-        var result = await BeansRepository.GetByIdAsync(seededBean.Id);
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(result.Id, Is.EqualTo(seededBean.Id));
-            Assert.That(result.Name, Is.EqualTo(seededBean.Name));
-            Assert.That(result.Description, Is.EqualTo(seededBean.Description));
-            Assert.That(result.CountryName, Is.EqualTo(seededBean.Country.Name));
-            Assert.That(result.Index, Is.EqualTo(seededBean.Index));
-            Assert.That(result.ImageName, Is.EqualTo(seededBean.ImageName));
-            Assert.That(result.Colour, Is.EqualTo(seededBean.Colour));
-            Assert.That(result.Cost, Is.EqualTo(seededBean.Cost));
-        }
-    }
-
-    [Test]
-    [Description("GetByIdAsync should throw KeyNotFoundException when bean is not found")]
-    public void GetByIdAsync_Should_ThrowKeyNotFoundException_When_BeanIsNotFound()
-    {
-        var notExistingId = Guid.NewGuid();
-
-        var exception = Assert.ThrowsAsync<KeyNotFoundException>(
-            () => BeansRepository.GetByIdAsync(notExistingId));
-
-        var expectedError = $"Bean with id {notExistingId} was not found";
-        Assert.That(exception.Message, Is.EqualTo(expectedError));
     }
 
     [Test]

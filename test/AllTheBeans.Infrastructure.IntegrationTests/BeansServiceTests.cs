@@ -1,6 +1,7 @@
 ﻿using AllTheBeans.Domain;
 using AllTheBeans.Domain.DataModels;
 using AllTheBeans.Domain.Entities;
+using AllTheBeans.Domain.Repositories.Implementations;
 using AllTheBeans.Domain.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -80,6 +81,48 @@ internal class BeansServiceTests
         var countriesInDb = await _context.Countries.ToListAsync();
         Assert.That(countriesInDb, Has.Count.EqualTo(1));
         Assert.That(countriesInDb[0].Name, Is.EqualTo(beanDto.CountryName));
+    }
+
+
+    [Test]
+    [Description("GetByIdAsync should return correct entity")]
+    public async Task GetByIdAsync_Should_ReturnCorrectEntity()
+    {
+        var seededBean = new Bean()
+        {
+            Country = new Country()
+            {
+                Name = "Peru"
+            }
+        };
+        await _context.AddAsync(seededBean);
+        await _context.SaveChangesAsync();
+
+        var result = await _service.GetByIdAsync(seededBean.Id);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.Id, Is.EqualTo(seededBean.Id));
+            Assert.That(result.Name, Is.EqualTo(seededBean.Name));
+            Assert.That(result.Description, Is.EqualTo(seededBean.Description));
+            Assert.That(result.CountryName, Is.EqualTo(seededBean.Country.Name));
+            Assert.That(result.Index, Is.EqualTo(seededBean.Index));
+            Assert.That(result.ImageName, Is.EqualTo(seededBean.ImageName));
+            Assert.That(result.Colour, Is.EqualTo(seededBean.Colour));
+            Assert.That(result.Cost, Is.EqualTo(seededBean.Cost));
+        }
+    }
+
+    [Test]
+    [Description("GetByIdAsync should throw KeyNotFoundException when bean is not found")]
+    public void GetByIdAsync_Should_ThrowKeyNotFoundException_When_BeanIsNotFound()
+    {
+        var notExistingId = Guid.NewGuid();
+
+        var exception = Assert.ThrowsAsync<KeyNotFoundException>(
+            () => _service.GetByIdAsync(notExistingId));
+
+        var expectedError = $"Bean with id {notExistingId} was not found";
+        Assert.That(exception.Message, Is.EqualTo(expectedError));
     }
 
     [Test]
