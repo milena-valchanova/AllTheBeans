@@ -1,28 +1,58 @@
 ﻿using AllTheBeans.Domain.DataModels;
 using AllTheBeans.Domain.Entities;
+using AllTheBeans.Domain.Enums;
+using EnumsNET;
 using Microsoft.EntityFrameworkCore;
 
 namespace AllTheBeans.Domain.Repositories.Implementations;
 internal class BeansRepository(BeansContext _context) : IBeansRepository
 {
-    public IQueryable<Bean> GetAll(int pageNumber, int pageSize, CancellationToken cancellationToken = default)
+    public IQueryable<Bean> GetAll(IGetAllParameters getAllParameters, CancellationToken cancellationToken = default)
     {
-        if (pageNumber <= 0)
-            throw new ArgumentException($"{nameof(pageNumber)} must have positive value");
-        if (pageSize <= 0)
-            throw new ArgumentException($"{nameof(pageSize)} must have positive value");
+        if (getAllParameters.PageNumber <= 0)
+            throw new ArgumentException($"{nameof(getAllParameters.PageNumber)} must have positive value");
+        if (getAllParameters.PageSize <= 0)
+            throw new ArgumentException($"{nameof(getAllParameters.PageSize)} must have positive value");
 
-        var entitiesToSkip = (pageNumber - 1) * pageSize;
-        return _context.Beans
-            .Include(p => p.Country)
-            .AsNoTracking()
+        var entitiesToSkip = (getAllParameters.PageNumber - 1) * getAllParameters.PageSize;
+        
+        return Search(getAllParameters)
             .OrderBy(p => p.Id)
             .Skip(entitiesToSkip)
-            .Take(pageSize);
+            .Take(getAllParameters.PageSize);
     }
 
-    public Task<int> CountAllAsync(CancellationToken cancellationToken = default)
-        => _context.Beans.CountAsync(cancellationToken);
+    public Task<int> CountAllAsync(ISearchParameters searchParameters, CancellationToken cancellationToken = default)
+        => Search(searchParameters).CountAsync(cancellationToken);
+
+    private IQueryable<Bean> Search(ISearchParameters searchParameters)
+    {
+        var query = _context.Beans
+            .Include(p => p.Country)
+            .AsNoTracking();
+
+        if (string.IsNullOrWhiteSpace(searchParameters.Search))
+        {
+            return query;            
+        }
+        var search = searchParameters.Search.Trim().ToLower();
+        var matchingColours = Enum.GetValues<BeanColour>()
+            .Where(p => {
+                var description = p.AsString(EnumFormat.Description);
+                if (description is null)
+                    return false;
+                return description.ToLower().Contains(search);
+            })
+            .ToList();
+
+        return query
+            .Where(p =>
+                p.Name.ToLower().Contains(search)
+                || p.Description.ToLower().Contains(search)
+                || p.Country.Name.ToLower().Contains(search)
+                || matchingColours.Contains(p.Colour)
+            );
+    }
 
     public async Task<Bean> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         => await GetByIdOrDefaultAsync(id, cancellationToken)

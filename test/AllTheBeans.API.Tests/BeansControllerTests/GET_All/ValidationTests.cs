@@ -55,7 +55,7 @@ internal class ValidationTests
     public async Task ValidQueryParameters_Should_BeAccepted(string endpoint, int expectedPageNumber, int expectedPageSize)
     {
         _beansService
-            .GetAllAsync(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
+            .GetAllAsync(Arg.Any<IGetAllParameters>(), Arg.Any<CancellationToken>())
             .ReturnsForAnyArgs(Task.FromResult(new List<IBeanDTO>()));
 
         using var httpClient = _factory.CreateClient();
@@ -65,7 +65,9 @@ internal class ValidationTests
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         await _beansService
             .Received(1)
-            .GetAllAsync(expectedPageNumber, expectedPageSize, Arg.Any<CancellationToken>());
+            .GetAllAsync(
+                Arg.Is<IGetAllParameters>(p => p.PageNumber == expectedPageNumber && p.PageSize == expectedPageSize),
+                Arg.Any<CancellationToken>());
     }
 
     [TestCase("/beans", 1, 10)]
@@ -76,7 +78,7 @@ internal class ValidationTests
     public async Task DefaultQueryParameters_Should_BeApplied_When_NotProvided(string endpoint, int expectedPageNumber, int expectedPageSize)
     {
         _beansService
-            .GetAllAsync(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
+            .GetAllAsync(Arg.Any<IGetAllParameters>(), Arg.Any<CancellationToken>())
             .ReturnsForAnyArgs(Task.FromResult(new List<IBeanDTO>()));
 
         using var httpClient = _factory.CreateClient();
@@ -86,7 +88,9 @@ internal class ValidationTests
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         await _beansService
             .Received(1)
-            .GetAllAsync(expectedPageNumber, expectedPageSize, Arg.Any<CancellationToken>());
+            .GetAllAsync(
+                Arg.Is<IGetAllParameters>(p => p.PageNumber == expectedPageNumber && p.PageSize == expectedPageSize),
+                Arg.Any<CancellationToken>());
     }
 
     [TestCase("/beans?PageNumber=0&PageSize=0")]

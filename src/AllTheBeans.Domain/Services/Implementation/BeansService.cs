@@ -25,13 +25,13 @@ internal class BeansService(
         CountryName = p.Country.Name
     } as IBeanDTO;
 
-    public Task<List<IBeanDTO>> GetAllAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default)
-        => _beansRepository.GetAll(pageNumber, pageSize, cancellationToken)
+    public Task<List<IBeanDTO>> GetAllAsync(IGetAllParameters getAllParameters, CancellationToken cancellationToken = default)
+        => _beansRepository.GetAll(getAllParameters, cancellationToken)
         .Select(_beanSelector)
         .ToListAsync(cancellationToken);
 
-    public Task<int> CountAllAsync(CancellationToken cancellationToken = default)
-        => _beansRepository.CountAllAsync(cancellationToken);
+    public Task<int> CountAllAsync(ISearchParameters searchParameters,CancellationToken cancellationToken = default)
+        => _beansRepository.CountAllAsync(searchParameters, cancellationToken);
 
     public async Task<IBeanDTO> CreateAsync(ICreateOrUpdateBeanDTO beanDTO, CancellationToken cancellationToken = default)
     {
@@ -81,7 +81,8 @@ internal class BeansService(
 
     public async Task<IBeanDTO> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var result = await GetAllAsync(1, 1, cancellationToken);
+        var parameters = new GetSingleResultParameters();
+        var result = await GetAllAsync(parameters, cancellationToken);
         return result
             .FirstOrDefault()
             ?? throw new KeyNotFoundException($"Bean with id {id} was not found");

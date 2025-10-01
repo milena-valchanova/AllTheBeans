@@ -56,11 +56,11 @@ internal class HttpResponseTests
     public async Task GetAll_Should_ReturnHttpStatusCodeOkWithCorrectResponse()
     {
         _beansService
-            .GetAllAsync(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
+            .GetAllAsync(Arg.Any<IGetAllParameters>(), Arg.Any<CancellationToken>())
             .ReturnsForAnyArgs(Task.FromResult(new List<IBeanDTO>()));
         var totalNumberOfBeans = 5;
         _beansService
-            .CountAllAsync(Arg.Any<CancellationToken>())
+            .CountAllAsync(Arg.Any<ISearchParameters>(), Arg.Any<CancellationToken>())
             .ReturnsForAnyArgs(totalNumberOfBeans);
 
         using var httpClient = _factory.CreateClient();
@@ -79,7 +79,7 @@ internal class HttpResponseTests
     {
         var exception = new Exception("Something went wrong");
         _beansService
-            .GetAllAsync(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
+            .GetAllAsync(Arg.Any<IGetAllParameters>(), Arg.Any<CancellationToken>())
             .ThrowsAsyncForAnyArgs(exception);
 
         using var httpClient = _factory.CreateClient();

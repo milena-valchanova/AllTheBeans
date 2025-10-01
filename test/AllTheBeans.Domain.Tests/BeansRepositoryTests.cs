@@ -39,10 +39,11 @@ internal class BeansRepositoryTests
     [Description("GetAll should throw ArgumentException when page number is negative")]
     public void GetAll_Should_ThrowArgumentException_WhenPageNumberIsNegative(int invalidPageNumber)
     {
+        var parameters = new GetAllTestParameters(invalidPageNumber, defaultPageSize);
         var ex = Assert.Throws<ArgumentException>(
-            () => BeansRepository.GetAll(invalidPageNumber, defaultPageSize));
+            () => BeansRepository.GetAll(parameters));
 
-        var expectedErrorMessage = "pageNumber must have positive value";
+        var expectedErrorMessage = "PageNumber must have positive value";
         Assert.That(ex.Message, Is.EqualTo(expectedErrorMessage));
     }
 
@@ -51,10 +52,11 @@ internal class BeansRepositoryTests
     [Description("GetAll should throw ArgumentException when page size is not positive")]
     public void GetAll_Should_ThrowArgumentException_WhenPageSizeIsNotPositive(int invalidPageSize)
     {
+        var parameters = new GetAllTestParameters(defaultPageNumber, invalidPageSize);
         var ex = Assert.Throws<ArgumentException>(
-            () => BeansRepository.GetAll(defaultPageNumber, invalidPageSize));
+            () => BeansRepository.GetAll(parameters));
 
-        var expectedErrorMessage = "pageSize must have positive value";
+        var expectedErrorMessage = "PageSize must have positive value";
         Assert.That(ex.Message, Is.EqualTo(expectedErrorMessage));
     }
 
@@ -62,7 +64,8 @@ internal class BeansRepositoryTests
     [Description("GetAll should return an empty collection when there is no records in the database")]
     public void GetAll_Should_ReturnEmptyCollection_When_ThereAreNoEntitiesInTheDatatbase()
     {
-        var result = BeansRepository.GetAll(defaultPageNumber, defaultPageSize);
+        var parameters = new GetAllTestParameters(defaultPageNumber, defaultPageSize);
+        var result = BeansRepository.GetAll(parameters);
 
         Assert.That(result, Is.Empty);
     }
@@ -74,7 +77,8 @@ internal class BeansRepositoryTests
         _context.Beans.Add(dummyBean);
         await _context.SaveChangesAsync();
 
-        var result = BeansRepository.GetAll(defaultPageNumber, defaultPageSize).ToList();
+        var parameters = new GetAllTestParameters(defaultPageNumber, defaultPageSize);
+        var result = BeansRepository.GetAll(parameters).ToList();
 
         Assert.That(result, Has.Count.EqualTo(1));
     }
@@ -90,16 +94,45 @@ internal class BeansRepositoryTests
         for (int i = 0; i < totalNumberOfBeans; i++)
         {
             seededBeans.Add(
-                new Bean() 
-                { 
+                new Bean()
+                {
                     Country = new Country()
                 });
         }
         await _context.AddRangeAsync(seededBeans);
         await _context.SaveChangesAsync();
 
-        var result = BeansRepository.GetAll(pageNumber, pageSize).ToList();
+        var parameters = new GetAllTestParameters(pageNumber, pageSize);
+        var result = BeansRepository.GetAll(parameters).ToList();
         Assert.That(result, Has.Count.EqualTo(expectedNumberOfBeans));
+    }
+
+    [TestCase(0)]
+    [TestCase(2)]
+    [TestCase(5)]
+    [Description("GetAll should filter entities correctly")]
+    public async Task GetAll_ShouldReturn_FilteredNumberOfBeans(int numberOfSeededEntities)
+    {
+        var matchingBean = new Bean()
+        {
+            Name = "Test",
+            Country = new Country()
+        };
+        _context.Beans.Add(matchingBean);
+        for (int i = 0; i < numberOfSeededEntities; i++)
+        {
+            _context.Beans.Add(new Bean()
+            {
+                Country = new Country()
+            });
+        }
+        await _context.SaveChangesAsync();
+
+        var parameters = new GetAllTestParameters(defaultPageNumber, defaultPageSize, "st");
+        var result = BeansRepository.GetAll(parameters).ToList();
+
+        Assert.That(result, Has.Count.EqualTo(1));
+        Assert.That(result[0].Name, Is.EqualTo(matchingBean.Name));
     }
 
     [TestCase(0)]
@@ -117,9 +150,36 @@ internal class BeansRepositoryTests
             await _context.SaveChangesAsync();
         }
 
-        var result = await BeansRepository.CountAllAsync();
+        var parameters = new GetAllTestParameters(defaultPageNumber, defaultPageSize);
+        var result = await BeansRepository.CountAllAsync(parameters);
 
         Assert.That(result, Is.EqualTo(numberOfSeededEntities));
+    }
+
+    [TestCase(0)]
+    [TestCase(2)]
+    [TestCase(5)]
+    [Description("Count all should return filtered number of beans in the database")]
+    public async Task CountAllAsync_ShouldReturn_FilteredNumberOfBeans(int numberOfSeededEntities)
+    {
+        _context.Beans.Add(new Bean()
+        {
+            Name = "Test",
+            Country = new Country()
+        });
+        for (int i = 0; i < numberOfSeededEntities; i++)
+        {
+            _context.Beans.Add(new Bean()
+            {
+                Country = new Country()
+            });
+        }
+        await _context.SaveChangesAsync();
+
+        var parameters = new GetAllTestParameters(defaultPageNumber, defaultPageSize, "st");
+        var result = await BeansRepository.CountAllAsync(parameters);
+
+        Assert.That(result, Is.EqualTo(1));
     }
 
     [Test]
@@ -208,3 +268,9 @@ internal class BeansRepositoryTests
         }
     }
 }
+
+internal record GetAllTestParameters(
+    int PageNumber, 
+    int PageSize, 
+    string? Search = null) 
+    : IGetAllParameters;

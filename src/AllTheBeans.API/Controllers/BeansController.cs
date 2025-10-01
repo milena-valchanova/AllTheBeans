@@ -13,14 +13,13 @@ public class BeansController(
 {
     [HttpGet]
     public async Task<IActionResult> GetAll(
-        [FromQuery] PaginationParameters paginationParameters,
+        [FromQuery] GetAllParameters getAllParameters,
         CancellationToken cancellationToken)
     {
         var beans = await _beansService.GetAllAsync(
-            paginationParameters.PageNumber,
-            paginationParameters.PageSize,
+            getAllParameters,
             cancellationToken);
-        var totalBeans = await _beansService.CountAllAsync(cancellationToken);
+        var totalBeans = await _beansService.CountAllAsync(getAllParameters, cancellationToken);
 
         var result = new BeansResponse()
         {
