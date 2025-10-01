@@ -4,7 +4,7 @@ using AllTheBeans.Domain.Entities;
 namespace AllTheBeans.Domain.Repositories;
 internal interface IBeansRepository
 {
-    IQueryable<Bean> GetAll(IGetAllParameters getAllParameters, CancellationToken cancellationToken = default);
+    IQueryable<Bean> GetAll(IGetAllParameters getAllParameters);
 
     Task<int> CountAllAsync(ISearchParameters searchParameters, CancellationToken cancellationToken = default);
 

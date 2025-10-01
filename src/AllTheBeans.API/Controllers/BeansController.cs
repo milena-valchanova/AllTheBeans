@@ -29,6 +29,15 @@ public class BeansController(
         return Ok(result);
     }
 
+    [HttpGet("of-the-day")]
+    public async Task<IActionResult> BeanOfTheDay(CancellationToken cancellationToken)
+    {
+        var currentDay = DateOnly.FromDateTime(DateTime.UtcNow);
+        var bean = await _beansService.GetOrCreateBeanOfTheDayAsync(currentDay, cancellationToken);
+        var result = _beansMapper.ToBeanResponse(bean);
+        return Ok(result);
+    }
+
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
     {

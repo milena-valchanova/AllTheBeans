@@ -43,4 +43,12 @@ public class Bean
             ?? throw new PropertyNotInitialisedException(nameof(Country));
         set => _country = value;
     }
+
+    private HashSet<BeanOfTheDay>? _beansOfTheDay;
+    public HashSet<BeanOfTheDay> BeansOfTheDay
+    {
+        get => _beansOfTheDay
+            ?? throw new PropertyNotInitialisedException(nameof(BeansOfTheDay));
+        set => _beansOfTheDay = value;
+    }
 }

@@ -11,6 +11,7 @@ public static class ServiceRegistration
     {
         services.AddScoped<IBeansRepository, BeansRepository>();
         services.AddScoped<ICountriesRepository, CountriesRepository>();
+        services.AddScoped<IBeanOfTheDayRepository, BeanOfTheDayRepository>();
         services.AddScoped<IBeansService, BeansService>();
         return services;
     }

@@ -21,6 +21,7 @@ public static class ServiceRegistration
             options.UseNpgsql(dataSource, npgSqlOptions =>
             {
                 npgSqlOptions.MigrationsAssembly(typeof(ServiceRegistration).Assembly.FullName);
+                npgSqlOptions.EnableRetryOnFailure();
             });
             options.UseExceptionProcessor();
         });

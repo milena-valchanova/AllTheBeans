@@ -2,12 +2,15 @@
 using AllTheBeans.Domain.DataModels;
 using AllTheBeans.Domain.Entities;
 using AllTheBeans.Domain.Services;
+using AllTheBeans.Domain.Services.Implementation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Testcontainers.PostgreSql;
 
 namespace AllTheBeans.Infrastructure.IntegrationTests;
+
+[TestFixture(TestOf = typeof(BeansService))]
 internal class BeansServiceTests
 {
     private PostgreSqlContainer _postgresCotainer;
@@ -185,6 +188,132 @@ internal class BeansServiceTests
 
         var expectedError = $"Bean with id {notExistingId} was not found";
         Assert.That(exception.Message, Is.EqualTo(expectedError));
+    }
+
+    [Test]
+    [Description("Bean of the day should throw KeyNotFoundException when there are no beans in the database")]
+    public void KeyNotFoundException_ShouldBe_Thrown_WhenThereAreNoBeans()
+    {
+        var exception = Assert.ThrowsAsync<KeyNotFoundException>(
+            () => _service.GetOrCreateBeanOfTheDayAsync(DateOnly.MaxValue));
+
+        var expectedError = "There are not enough beans to select Bean Of The Day";
+        Assert.That(exception.Message, Is.EqualTo(expectedError));
+    }
+
+    [Test]
+    [Description("Bean of the day should throw KeyNotFoundException when the only bean in the database was previously selected")]
+    public async Task KeyNotFoundException_ShouldBe_Thrown_When_TheOnlyBeanInTheDatabaseWasPreviouslySelected()
+    {
+        var seededBean = new Bean()
+        {
+            Country = new Country()
+            {
+                Name = "Peru"
+            }
+        };
+        await _context.AddAsync(seededBean);
+        await _context.SaveChangesAsync();
+
+        await _context.BeansOfTheDay.AddAsync(new BeanOfTheDay
+        {
+            BeanId = seededBean.Id,
+            Date = DateOnly.MaxValue.AddDays(-1)
+        });
+        await _context.SaveChangesAsync();
+
+        var exception = Assert.ThrowsAsync<KeyNotFoundException>(
+            () => _service.GetOrCreateBeanOfTheDayAsync(DateOnly.MaxValue));
+
+        var expectedError = "There are not enough beans to select Bean Of The Day";
+        Assert.That(exception.Message, Is.EqualTo(expectedError));
+    }
+
+    [Test]
+    [Description("The bean of the day should be the only bean in the database when there is no previously selected ones")]
+    public async Task TheBeanOfTheDay_ShouldBe_TheOnlyBean_When_TheIsNoPreviouslySelectedOnes()
+    {
+        var seededBean = new Bean()
+        {
+            Country = new Country()
+            {
+                Name = "Peru"
+            }
+        };
+        await _context.AddAsync(seededBean);
+        await _context.SaveChangesAsync();
+
+        var bean = await _service.GetOrCreateBeanOfTheDayAsync(DateOnly.MaxValue);
+
+        Assert.That(bean.Id, Is.EqualTo(seededBean.Id));
+    }
+
+    [Test]
+    [Description("The bean of the day should not be previously selected one")]
+    public async Task TheBeanOfTheDay_ShouldNotBe_PreviouslySelectedOne()
+    {
+        var previouslySelectedBean = new Bean()
+        {
+            Name = "Bean 1",
+            Country = new Country()
+            {
+                Name = "Peru"
+            }
+        };
+        var anotherBean = new Bean()
+        {
+            Name = "Bean 2",
+            Country = new Country()
+            {
+                Name = "Bolivia"
+            }
+        };
+        await _context.AddRangeAsync(previouslySelectedBean, anotherBean);
+        await _context.SaveChangesAsync();
+        await _context.BeansOfTheDay.AddAsync(new BeanOfTheDay
+        {
+            BeanId = previouslySelectedBean.Id,
+            Date = DateOnly.MaxValue.AddDays(-1)
+        });
+        await _context.SaveChangesAsync();
+
+        var bean = await _service.GetOrCreateBeanOfTheDayAsync(DateOnly.MaxValue);
+
+        Assert.That(bean.Id, Is.EqualTo(anotherBean.Id));
+    }
+
+    [Test]
+    [Description("The bean of the day should be the same for the same date")]
+    public async Task TheBeanOfTheDay_ShouldBe_TheSameForTheSameDate()
+    {
+        var previouslySelectedBean = new Bean()
+        {
+            Name = "Bean 1",
+            Country = new Country()
+            {
+                Name = "Peru"
+            }
+        };
+        var anotherBean = new Bean()
+        {
+            Name = "Bean 2",
+            Country = new Country()
+            {
+                Name = "Bolivia"
+            }
+        };
+        await _context.AddRangeAsync(previouslySelectedBean, anotherBean);
+        await _context.SaveChangesAsync();
+        await _context.BeansOfTheDay.AddAsync(new BeanOfTheDay
+        {
+            BeanId = previouslySelectedBean.Id,
+            Date = DateOnly.MaxValue
+        });
+        await _context.SaveChangesAsync();
+
+        var bean = await _service.GetOrCreateBeanOfTheDayAsync(DateOnly.MaxValue);
+
+        Assert.That(bean.Id, Is.EqualTo(previouslySelectedBean.Id));
     }
 
     [Test]

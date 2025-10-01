@@ -3,6 +3,7 @@ using System;
 using AllTheBeans.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AllTheBeans.Infrastructure.Migrations
 {
     [DbContext(typeof(BeansContext))]
-    partial class BeansContextModelSnapshot : ModelSnapshot
+    [Migration("20251001110101_AddBeanOfTheDay")]
+    partial class AddBeanOfTheDay
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

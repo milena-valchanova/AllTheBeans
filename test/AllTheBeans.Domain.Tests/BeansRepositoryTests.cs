@@ -230,8 +230,11 @@ internal class BeansRepositoryTests
 
         await BeansRepository.DeleteAsync(seededBean);
 
-        Assert.That(_context.Beans.Count(), Is.EqualTo(0));
-        Assert.That(_context.Countries.Count(), Is.EqualTo(1));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(_context.Beans.Count(), Is.EqualTo(0));
+            Assert.That(_context.Countries.Count(), Is.EqualTo(1));
+        }
     }
 
     [Test]
@@ -270,7 +273,7 @@ internal class BeansRepositoryTests
 }
 
 internal record GetAllTestParameters(
-    int PageNumber, 
-    int PageSize, 
+    int? PageNumber, 
+    int? PageSize, 
     string? Search = null) 
     : IGetAllParameters;

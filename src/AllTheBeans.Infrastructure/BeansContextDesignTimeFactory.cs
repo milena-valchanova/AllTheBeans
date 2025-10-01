@@ -11,6 +11,7 @@ internal class BeansContextDesignTimeFactory : IDesignTimeDbContextFactory<Beans
         optionsBuilder.UseNpgsql(npgSqlOptions =>
         {
             npgSqlOptions.MigrationsAssembly(typeof(ServiceRegistration).Assembly.FullName);
+            npgSqlOptions.EnableRetryOnFailure();
         });
         return new BeansContext(optionsBuilder.Options);
     }

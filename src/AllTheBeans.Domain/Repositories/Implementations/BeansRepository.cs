@@ -7,19 +7,29 @@ using Microsoft.EntityFrameworkCore;
 namespace AllTheBeans.Domain.Repositories.Implementations;
 internal class BeansRepository(BeansContext _context) : IBeansRepository
 {
-    public IQueryable<Bean> GetAll(IGetAllParameters getAllParameters, CancellationToken cancellationToken = default)
+    public IQueryable<Bean> GetAll(IGetAllParameters getAllParameters)
     {
+        if (getAllParameters.PageNumber is null && getAllParameters.PageSize is null)
+        {
+            return Search(getAllParameters);
+        }
+
+        if (getAllParameters.PageNumber is null || getAllParameters.PageSize is null)
+        {
+            throw new ArgumentException($"Both {nameof(getAllParameters.PageNumber)} and {nameof(getAllParameters.PageSize)} "
+                + "must be provided or none of them");
+        }
         if (getAllParameters.PageNumber <= 0)
             throw new ArgumentException($"{nameof(getAllParameters.PageNumber)} must have positive value");
         if (getAllParameters.PageSize <= 0)
             throw new ArgumentException($"{nameof(getAllParameters.PageSize)} must have positive value");
 
-        var entitiesToSkip = (getAllParameters.PageNumber - 1) * getAllParameters.PageSize;
+        var entitiesToSkip = (getAllParameters.PageNumber.Value - 1) * getAllParameters.PageSize.Value;
         
         return Search(getAllParameters)
             .OrderBy(p => p.Id)
             .Skip(entitiesToSkip)
-            .Take(getAllParameters.PageSize);
+            .Take(getAllParameters.PageSize.Value);
     }
 
     public Task<int> CountAllAsync(ISearchParameters searchParameters, CancellationToken cancellationToken = default)

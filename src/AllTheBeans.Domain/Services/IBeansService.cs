@@ -10,6 +10,8 @@ public interface IBeansService
     
     Task<int> CountAllAsync(ISearchParameters searchParameters, CancellationToken cancellationToken = default);
 
+    Task<IBeanDTO> GetOrCreateBeanOfTheDayAsync(DateOnly date, CancellationToken cancellationToken = default);
+
     Task<IBeanDTO> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
     Task<IBeanDTO> CreateAsync(ICreateOrUpdateBeanDTO beanDTO, CancellationToken cancellationToken = default);

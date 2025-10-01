@@ -10,12 +10,12 @@ using NSubstitute.ClearExtensions;
 using NSubstitute.ExceptionExtensions;
 using System.Net;
 
-namespace AllTheBeans.API.IntegrationTests.BeansControllerTests.GET_ById;
+namespace AllTheBeans.API.IntegrationTests.BeansControllerTests.BeanOfTheDay;
 
 [TestFixture(TestOf = typeof(BeansController))]
 internal class HttpResponseTests
 {
-    private const string Endpoint = "/beans/680d88e9-d495-46a0-b0ca-133c12d939f5";
+    private const string Endpoint = "/beans/of-the-day";
 
     private readonly IBeansService _beansService =
         Substitute.For<IBeansService>();
@@ -48,12 +48,12 @@ internal class HttpResponseTests
     }
 
     [Test]
-    [Description("Not Found status code should be returned when a bean is not existing in the database")]
-    public async Task NotFoundStatusCode_ShouldBe_Returned_When_ABeanIsNotExistingInTheDatabase()
+    [Description("Not Found status code should be returned when a bean of the day could not be determined")]
+    public async Task NotFoundStatusCode_ShouldBe_Returned_When_ABeanOfTheDayCouldNotBeDetermined()
     {
         var exception = new KeyNotFoundException("Not found");
         _beansService
-            .GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+            .GetOrCreateBeanOfTheDayAsync(Arg.Any<DateOnly>(), Arg.Any<CancellationToken>())
             .ThrowsAsyncForAnyArgs(exception);
 
         using var httpClient = _factory.CreateClient();
@@ -71,7 +71,7 @@ internal class HttpResponseTests
     {
         var exception = new Exception("Something went wrong");
         _beansService
-            .GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+            .GetOrCreateBeanOfTheDayAsync(Arg.Any<DateOnly>(), Arg.Any<CancellationToken>())
             .ThrowsAsyncForAnyArgs(exception);
 
         using var httpClient = _factory.CreateClient();
